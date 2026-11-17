@@ -1,0 +1,63 @@
+cmake:
+  application:
+    configuration-dir: '/home/nhut/zephyrproject/turret'
+    source-dir: '/home/nhut/zephyrproject/turret'
+  board:
+    name: 'stm32f4_disco'
+    path:
+     - '/home/nhut/zephyrproject/zephyr/boards/st/stm32f4_disco'
+    qualifiers: 'stm32f407xx'
+    revision: ''
+  devicetree:
+    bindings-dirs:
+     - '/home/nhut/zephyrproject/zephyr/dts/bindings'
+    files:
+     - '/home/nhut/zephyrproject/zephyr/boards/st/stm32f4_disco/stm32f4_disco.dts'
+     - '/home/nhut/zephyrproject/turret/boards/stm32f4_disco.overlay'
+    include-dirs:
+     - '/home/nhut/zephyrproject/modules/hal/ambiq/dts'
+     - '/home/nhut/zephyrproject/modules/hal/atmel/include'
+     - '/home/nhut/zephyrproject/modules/hal/bouffalolab/include'
+     - '/home/nhut/zephyrproject/modules/hal/bouffalolab/include/zephyr'
+     - '/home/nhut/zephyrproject/modules/hal/gigadevice/include'
+     - '/home/nhut/zephyrproject/modules/hal/infineon/dts'
+     - '/home/nhut/zephyrproject/modules/hal/microchip/include'
+     - '/home/nhut/zephyrproject/modules/hal/microchip/dts'
+     - '/home/nhut/zephyrproject/modules/hal/nuvoton/dts'
+     - '/home/nhut/zephyrproject/modules/hal/nxp/dts'
+     - '/home/nhut/zephyrproject/modules/hal/stm32/dts'
+     - '/home/nhut/zephyrproject/modules/hal/ti/dts'
+     - '/home/nhut/zephyrproject/zephyr/include'
+     - '/home/nhut/zephyrproject/zephyr/include/zephyr'
+     - '/home/nhut/zephyrproject/zephyr/dts/common'
+     - '/home/nhut/zephyrproject/zephyr/dts/vendor'
+     - '/home/nhut/zephyrproject/zephyr/dts/tricore'
+     - '/home/nhut/zephyrproject/zephyr/dts/rx'
+     - '/home/nhut/zephyrproject/zephyr/dts/x86'
+     - '/home/nhut/zephyrproject/zephyr/dts/xtensa'
+     - '/home/nhut/zephyrproject/zephyr/dts/sparc'
+     - '/home/nhut/zephyrproject/zephyr/dts/riscv'
+     - '/home/nhut/zephyrproject/zephyr/dts/posix'
+     - '/home/nhut/zephyrproject/zephyr/dts/arm64'
+     - '/home/nhut/zephyrproject/zephyr/dts/arm'
+     - '/home/nhut/zephyrproject/zephyr/dts/arc'
+     - '/home/nhut/zephyrproject/zephyr/dts'
+    user-files:
+     - '/home/nhut/zephyrproject/turret/boards/stm32f4_disco.overlay'
+  kconfig:
+    files:
+     - '/home/nhut/zephyrproject/zephyr/boards/st/stm32f4_disco/stm32f4_disco_defconfig'
+     - '/home/nhut/zephyrproject/turret/prj.conf'
+    user-files:
+     - '/home/nhut/zephyrproject/turret/prj.conf'
+  toolchain:
+    name: 'zephyr'
+    path: '/home/nhut/sdk-zephyr/zephyr-sdk-1.0.1'
+  zephyr:
+    version: '4.5.0-rc1'
+    zephyr-base: '/home/nhut/zephyrproject/zephyr'
+version: '0.1.0'
+west:
+  command: '/home/nhut/zephyrproject/.venv/bin/west build -p auto -b stm32f4_disco'
+  topdir: '/home/nhut/zephyrproject'
+  version: '1.5.0'

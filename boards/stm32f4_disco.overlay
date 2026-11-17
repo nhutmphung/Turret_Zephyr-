@@ -1,9 +1,9 @@
-/ {
-    zephyr,user {
-        pan-step-gpio  = <&gpio0 5 GPIO_ACTIVE_HIGH>;
-        pan-dir-gpio   = <&gpio0 6 GPIO_ACTIVE_HIGH>;
-        tilt-step-gpio = <&gpio  7 GPIO_ACTIVE_HIGH>;
-        tilt-dir-gpio  = <&gpio  8 GPIO_ACTIVE_HIGH>; 
-    };
 
+/ {
+	zephyr,user {
+		pan-step-gpios  = <&gpioe 9  GPIO_ACTIVE_HIGH>;
+		pan-dir-gpios   = <&gpioe 10 GPIO_ACTIVE_HIGH>;
+		tilt-step-gpios = <&gpioe 11 GPIO_ACTIVE_HIGH>;
+		tilt-dir-gpios  = <&gpioe 12 GPIO_ACTIVE_HIGH>;
+	};
 };
