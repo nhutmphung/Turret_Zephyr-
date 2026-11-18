@@ -32,6 +32,8 @@
 /home/nhut/zephyrproject/zephyr/dts/bindings/audio/cirrus,cs43l22.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/base/power.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/i2c/i2c-device.yaml
+/home/nhut/zephyrproject/zephyr/dts/bindings/sensor/st,vl53l0x.yaml
+/home/nhut/zephyrproject/zephyr/dts/bindings/sensor/sensor-device.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/spi/st,stm32-spi.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/spi/spi-controller.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/spi/st,stm32-spi-common.yaml
@@ -43,7 +45,6 @@
 /home/nhut/zephyrproject/zephyr/dts/bindings/pwm/pwm-controller.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/counter/st,stm32-counter.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/sensor/st,stm32-qdec.yaml
-/home/nhut/zephyrproject/zephyr/dts/bindings/sensor/sensor-device.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/rtc/st,stm32-rtc.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/rtc/rtc-device.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/rtc/rtc.yaml

@@ -15,8 +15,8 @@ then run these:
 source activates the .venv and then you cd into the zephyr repo
 
 >
-> west build -p auto -b "board" path/to/app
->
+> west build -p auto -b stm32f4_disco .
+> (if inside zephyr/turret)
 >west flash --runner openocd
 
 west build is what builds your source code, and the west flash is what flashes into your microcontroller.

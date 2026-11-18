@@ -3218,5 +3218,13 @@ zephyr_udc0: &usbotg_fs {
   tilt-dir-gpios = <&gpioe 12 (0 << 0)>;
  };
 };
+
+
+&i2c1 {
+ tof: vl53l0x@29 {
+  compatible = "st,vl53l0x";
+  reg = <0x29>;
+ };
+};
 # 0 "<command-line>" 2
 # 1 "/home/nhut/zephyrproject/zephyr/misc/empty_file.c"

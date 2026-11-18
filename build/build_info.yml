@@ -58,6 +58,6 @@ cmake:
     zephyr-base: '/home/nhut/zephyrproject/zephyr'
 version: '0.1.0'
 west:
-  command: '/home/nhut/zephyrproject/.venv/bin/west build -p auto -b stm32f4_disco'
+  command: '/home/nhut/zephyrproject/.venv/bin/west build -p auto -b stm32f4_disco .'
   topdir: '/home/nhut/zephyrproject'
   version: '1.5.0'

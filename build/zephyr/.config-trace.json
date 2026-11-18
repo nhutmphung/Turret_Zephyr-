@@ -462,6 +462,17 @@
     ]
   ],
   [
+    "CONFIG_DT_HAS_ST_VL53L0X_ENABLED",
+    "n",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/turret/build/Kconfig/Kconfig.dts",
+      16313
+    ]
+  ],
+  [
     "CONFIG_DT_HAS_USB_NOP_XCEIV_ENABLED",
     "n",
     "bool",
@@ -511,6 +522,17 @@
     null
   ],
   [
+    "CONFIG_ADC_INIT_PRIORITY",
+    "y",
+    "int",
+    "50",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/adc/Kconfig",
+      80
+    ]
+  ],
+  [
     "CONFIG_MAIN_STACK_SIZE",
     "y",
     "int",
@@ -552,9 +574,11 @@
     "CONFIG_I2C",
     "y",
     "bool",
-    null,
-    "unset",
-    null
+    "y",
+    "select",
+    [
+      "VL53L0X && DT_HAS_ST_VL53L0X_ENABLED && ZEPHYR_HAL_ST_MODULE && SENSOR"
+    ]
   ],
   [
     "CONFIG_BT",
@@ -598,9 +622,12 @@
     "CONFIG_SENSOR",
     "y",
     "bool",
-    null,
-    "unset",
-    null
+    "y",
+    "assign",
+    [
+      "/home/nhut/zephyrproject/turret/prj.conf",
+      5
+    ]
   ],
   [
     "CONFIG_MIPI_DSI",
@@ -628,6 +655,25 @@
   ],
   [
     "CONFIG_UART_INTERRUPT_DRIVEN",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_I2C_TRANSFER_TIMEOUT_MS",
+    "y",
+    "int",
+    "1000",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/boards/shields/st_b_cams_imx_mb1854/Kconfig.defconfig",
+      21
+    ]
+  ],
+  [
+    "CONFIG_VL53L0X_RECONFIGURE_ADDRESS",
     "y",
     "bool",
     null,
@@ -1911,6 +1957,16 @@
     [
       "/home/nhut/zephyrproject/turret/build/Kconfig/Kconfig.modules",
       185
+    ]
+  ],
+  [
+    "CONFIG_HAS_STLIB",
+    "n",
+    "bool",
+    "y",
+    "select",
+    [
+      "VL53L0X && DT_HAS_ST_VL53L0X_ENABLED && ZEPHYR_HAL_ST_MODULE && SENSOR"
     ]
   ],
   [
@@ -4506,6 +4562,144 @@
     "CONFIG_ADC",
     "y",
     "bool",
+    "y",
+    "select",
+    [
+      "STM32_TEMP && SOC_FAMILY_STM32 && DT_HAS_ST_STM32_ADC_ENABLED && (DT_HAS_ST_STM32_TEMP_ENABLED || DT_HAS_ST_STM32_TEMP_CAL_ENABLED || DT_HAS_ST_STM32C0_TEMP_CAL_ENABLED) && SENSOR",
+      "STM32_VBAT && (DT_HAS_ST_STM32_VBAT_ENABLED || DT_HAS_ST_STM32_VDDCORE_ENABLED) && DT_HAS_ST_STM32_ADC_ENABLED && SOC_FAMILY_STM32 && !SOC_SERIES_STM32F1X && SENSOR",
+      "STM32_VREF && DT_HAS_ST_STM32_ADC_ENABLED && DT_HAS_ST_STM32_VREF_ENABLED && SOC_FAMILY_STM32 && !SOC_SERIES_STM32F1X && SENSOR"
+    ]
+  ],
+  [
+    "CONFIG_ADC_HAS_SEQUENCE_PRIORITY",
+    "n",
+    "bool",
+    "y",
+    "select",
+    [
+      "ADC_STM32 && DT_HAS_ST_STM32_ADC_ENABLED && ADC"
+    ]
+  ],
+  [
+    "CONFIG_ADC_SEQUENCE_PRIORITY",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_ADC_ASYNC",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_ADC_STREAM",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_ADC_DEFAULT_RTIO",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_ADC_LOG_LEVEL_OFF",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_ADC_LOG_LEVEL_ERR",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_ADC_LOG_LEVEL_WRN",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_ADC_LOG_LEVEL_INF",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_ADC_LOG_LEVEL_DBG",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_ADC_LOG_LEVEL_DEFAULT",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/subsys/logging/Kconfig.template.log_config",
+      5
+    ]
+  ],
+  [
+    "CONFIG_ADC_LOG_LEVEL",
+    "n",
+    "int",
+    "3",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/subsys/logging/Kconfig.template.log_config",
+      36
+    ]
+  ],
+  [
+    "CONFIG_ADC_STM32",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/adc/Kconfig.stm32",
+      15
+    ]
+  ],
+  [
+    "CONFIG_ADC_STM32_VREFINT_CALIBRATE",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/adc/Kconfig.stm32",
+      27
+    ]
+  ],
+  [
+    "CONFIG_ADC_STM32_DMA",
+    "y",
+    "bool",
     null,
     "unset",
     null
@@ -5139,6 +5333,184 @@
     null
   ],
   [
+    "CONFIG_I2C_SHELL_BUFFER_SIZE",
+    "y",
+    "int",
+    "16",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/i2c/Kconfig",
+      27
+    ]
+  ],
+  [
+    "CONFIG_I2C_TRANSFER_TIMEOUT_SUPPORTED",
+    "n",
+    "bool",
+    "y",
+    "select",
+    [
+      "I2C_STM32 && (DT_HAS_ST_STM32_I2C_V1_ENABLED || DT_HAS_ST_STM32_I2C_V2_ENABLED) && I2C"
+    ]
+  ],
+  [
+    "CONFIG_I2C_CALLBACK",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_I2C_BUS_RECOVERY",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_I2C_RTIO",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_I2C_TARGET",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_I2C_STM32",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/i2c/Kconfig.stm32",
+      6
+    ]
+  ],
+  [
+    "CONFIG_I2C_STM32_V1",
+    "n",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/i2c/Kconfig.stm32",
+      17
+    ]
+  ],
+  [
+    "CONFIG_I2C_STM32_INTERRUPT",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/i2c/Kconfig.stm32",
+      34
+    ]
+  ],
+  [
+    "CONFIG_I2C_STM32_BUS_RECOVERY",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_I2C_STM32_WAIT_BUS_IDLE_TIMEOUT_USEC",
+    "y",
+    "int",
+    "2000",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/i2c/Kconfig.stm32",
+      72
+    ]
+  ],
+  [
+    "CONFIG_I2C_INIT_PRIORITY",
+    "y",
+    "int",
+    "50",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/i2c/Kconfig",
+      209
+    ]
+  ],
+  [
+    "CONFIG_I2C_LOG_LEVEL_OFF",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_I2C_LOG_LEVEL_ERR",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_I2C_LOG_LEVEL_WRN",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_I2C_LOG_LEVEL_INF",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_I2C_LOG_LEVEL_DBG",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_I2C_LOG_LEVEL_DEFAULT",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/subsys/logging/Kconfig.template.log_config",
+      5
+    ]
+  ],
+  [
+    "CONFIG_I2C_LOG_LEVEL",
+    "n",
+    "int",
+    "3",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/subsys/logging/Kconfig.template.log_config",
+      36
+    ]
+  ],
+  [
     "CONFIG_I2S",
     "y",
     "bool",
@@ -5376,6 +5748,8 @@
     "y",
     "select",
     [
+      "ADC_STM32 && DT_HAS_ST_STM32_ADC_ENABLED && ADC",
+      "I2C_STM32 && (DT_HAS_ST_STM32_I2C_V1_ENABLED || DT_HAS_ST_STM32_I2C_V2_ENABLED) && I2C",
       "UART_STM32 && DT_HAS_ST_STM32_UART_ENABLED && SERIAL"
     ]
   ],
@@ -5561,6 +5935,172 @@
     null,
     "unset",
     null
+  ],
+  [
+    "CONFIG_SENSOR_LOG_LEVEL_OFF",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_SENSOR_LOG_LEVEL_ERR",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_SENSOR_LOG_LEVEL_WRN",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_SENSOR_LOG_LEVEL_INF",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_SENSOR_LOG_LEVEL_DBG",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_SENSOR_LOG_LEVEL_DEFAULT",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/subsys/logging/Kconfig.template.log_config",
+      5
+    ]
+  ],
+  [
+    "CONFIG_SENSOR_LOG_LEVEL",
+    "n",
+    "int",
+    "3",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/subsys/logging/Kconfig.template.log_config",
+      36
+    ]
+  ],
+  [
+    "CONFIG_SENSOR_INIT_PRIORITY",
+    "y",
+    "int",
+    "90",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/sensor/Kconfig",
+      20
+    ]
+  ],
+  [
+    "CONFIG_SENSOR_ASYNC_API",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_SENSOR_INFO",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_ADE7978_SHUNT_RESISTOR",
+    "y",
+    "int",
+    "200",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/sensor/adi/ade7978/Kconfig",
+      15
+    ]
+  ],
+  [
+    "CONFIG_ADE7978_VOLTAGE_DIVIDER",
+    "y",
+    "int",
+    "1131",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/sensor/adi/ade7978/Kconfig",
+      21
+    ]
+  ],
+  [
+    "CONFIG_STM32_TEMP",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/sensor/st/stm32_temp/Kconfig",
+      8
+    ]
+  ],
+  [
+    "CONFIG_STM32_VBAT",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/sensor/st/stm32_vbat/Kconfig",
+      8
+    ]
+  ],
+  [
+    "CONFIG_STM32_VREF",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/sensor/st/stm32_vref/Kconfig",
+      8
+    ]
+  ],
+  [
+    "CONFIG_VL53L0X",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/sensor/st/vl53l0x/Kconfig",
+      8
+    ]
+  ],
+  [
+    "CONFIG_VL53L0X_PROXIMITY_THRESHOLD",
+    "y",
+    "int",
+    "100",
+    "assign",
+    [
+      "/home/nhut/zephyrproject/turret/prj.conf",
+      6
+    ]
   ],
   [
     "CONFIG_SENT",
@@ -6210,30 +6750,19 @@
     "CONFIG_PICOLIBC_IO_FLOAT",
     "y",
     "bool",
-    null,
-    "unset",
-    null
-  ],
-  [
-    "CONFIG_PICOLIBC_IO_LONG_LONG",
-    "y",
-    "bool",
     "y",
     "default",
-    [
-      "/home/nhut/zephyrproject/zephyr/lib/libc/picolibc/Kconfig",
-      35
-    ]
+    null
   ],
   [
     "CONFIG_STDOUT_CONSOLE",
     "y",
     "bool",
     "y",
-    "default",
+    "assign",
     [
-      "/home/nhut/zephyrproject/zephyr/lib/libc/Kconfig",
-      173
+      "/home/nhut/zephyrproject/turret/prj.conf",
+      3
     ]
   ],
   [
@@ -6709,9 +7238,12 @@
     "CONFIG_CBPRINTF_FP_SUPPORT",
     "y",
     "bool",
-    null,
-    "unset",
-    null
+    "y",
+    "assign",
+    [
+      "/home/nhut/zephyrproject/turret/prj.conf",
+      8
+    ]
   ],
   [
     "CONFIG_CBPRINTF_FP_A_SUPPORT",
