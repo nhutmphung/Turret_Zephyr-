@@ -5547,6 +5547,23 @@
 #define DT_N_S_zephyr_user_PINCTRL_NUM 0
 
 /* Generic property macros: */
+#define DT_N_S_zephyr_user_P_pir_gpios_IDX_0_EXISTS 1
+#define DT_N_S_zephyr_user_P_pir_gpios_IDX_0_PH DT_N_S_soc_S_pin_controller_40020000_S_gpio_40021000
+#define DT_N_S_zephyr_user_P_pir_gpios_IDX_0_VAL_pin 7
+#define DT_N_S_zephyr_user_P_pir_gpios_IDX_0_VAL_pin_EXISTS 1
+#define DT_N_S_zephyr_user_P_pir_gpios_IDX_0_VAL_flags 32
+#define DT_N_S_zephyr_user_P_pir_gpios_IDX_0_VAL_flags_EXISTS 1
+#define DT_N_S_zephyr_user_P_pir_gpios_IDX_0_FOREACH_CELL(fn) fn(DT_N_S_zephyr_user, pir_gpios, 0, pin) \
+	fn(DT_N_S_zephyr_user, pir_gpios, 0, flags)
+#define DT_N_S_zephyr_user_P_pir_gpios_IDX_0_FOREACH_CELL_SEP(fn, sep) fn(DT_N_S_zephyr_user, pir_gpios, 0, pin) DT_DEBRACKET_INTERNAL sep \
+	fn(DT_N_S_zephyr_user, pir_gpios, 0, flags)
+#define DT_N_S_zephyr_user_P_pir_gpios_IDX_0_NUM_CELLS 2
+#define DT_N_S_zephyr_user_P_pir_gpios_FOREACH_PROP_ELEM(fn) fn(DT_N_S_zephyr_user, pir_gpios, 0)
+#define DT_N_S_zephyr_user_P_pir_gpios_FOREACH_PROP_ELEM_SEP(fn, sep) fn(DT_N_S_zephyr_user, pir_gpios, 0)
+#define DT_N_S_zephyr_user_P_pir_gpios_FOREACH_PROP_ELEM_VARGS(fn, ...) fn(DT_N_S_zephyr_user, pir_gpios, 0, __VA_ARGS__)
+#define DT_N_S_zephyr_user_P_pir_gpios_FOREACH_PROP_ELEM_SEP_VARGS(fn, sep, ...) fn(DT_N_S_zephyr_user, pir_gpios, 0, __VA_ARGS__)
+#define DT_N_S_zephyr_user_P_pir_gpios_LEN 1
+#define DT_N_S_zephyr_user_P_pir_gpios_EXISTS 1
 #define DT_N_S_zephyr_user_P_pan_step_gpios_IDX_0_EXISTS 1
 #define DT_N_S_zephyr_user_P_pan_step_gpios_IDX_0_PH DT_N_S_soc_S_pin_controller_40020000_S_gpio_40021000
 #define DT_N_S_zephyr_user_P_pan_step_gpios_IDX_0_VAL_pin 9

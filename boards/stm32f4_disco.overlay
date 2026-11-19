@@ -1,6 +1,7 @@
 
 / {
 	zephyr,user {
+        pir-gpios       = <&gpioe 7  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>; 
 		pan-step-gpios  = <&gpioe 9  GPIO_ACTIVE_HIGH>;
 		pan-dir-gpios   = <&gpioe 10 GPIO_ACTIVE_HIGH>;
 		tilt-step-gpios = <&gpioe 11 GPIO_ACTIVE_HIGH>;

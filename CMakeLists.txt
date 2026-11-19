@@ -7,6 +7,7 @@ target_sources(app PRIVATE
 	src/main.c
     sensors/vl53l0x.c
     sensors/stepper.c
+    sensors/pir.c
 )
 
 target_include_directories(app PRIVATE sensors)

@@ -3212,6 +3212,7 @@ zephyr_udc0: &usbotg_fs {
 
 / {
  zephyr,user {
+        pir-gpios = <&gpioe 7 ((0 << 0) | (1 << 5))>;
   pan-step-gpios = <&gpioe 9 (0 << 0)>;
   pan-dir-gpios = <&gpioe 10 (0 << 0)>;
   tilt-step-gpios = <&gpioe 11 (0 << 0)>;

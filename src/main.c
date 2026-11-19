@@ -3,6 +3,7 @@
 #include <zephyr/logging/log.h>
 #include "vl53l0x.h"
 #include "stepper.h"
+#include "pir.h"
 
 /* Pins come from boards/stm32f4_disco.overlay (zephyr,user node) */
 #define USER_NODE DT_PATH(zephyr_user)
@@ -22,15 +23,27 @@ static const struct stepper tilt = {
 	.dir  = GPIO_DT_SPEC_GET(USER_NODE, tilt_dir_gpios),
 };
 
+static const struct pir_sensor pir = {
+    .name = "pir",
+    .pin = GPIO_DT_SPEC_GET(USER_NODE, pir_gpios),
+};
+
 int main(void)
 {
 	if (stepper_init(&pan) < 0 || stepper_init(&tilt) < 0) {
 		return 0;
 	}
-
+    LOG_INF("Steppers is ready.");
     if(vl53l0x_init() < 0) {
         return 0;
     }
+    LOG_INF("ToF sensor is ready.");
+
+    if(pir_init(&pir) < 0) {
+        return 0;
+    }
+    LOG_INF("PIR sensor is ready.");
+
 	LOG_INF("turret ready");
 
 	/* Test pattern: sweep each axis forward and back */
@@ -43,6 +56,10 @@ int main(void)
         if (ret == 0) {
             LOG_INF("distance %d mm, near = %d", mm, near); 
         }
+
+        if( pir_detect(&pir)) {
+            LOG_INF("motion detected");
+        }  
 
 		LOG_INF("pan +%d", STEPS_PER_MOVE);
 		stepper_move(&pan, STEPS_PER_MOVE);
