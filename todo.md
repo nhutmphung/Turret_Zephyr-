@@ -9,9 +9,41 @@ Checked against the Zephyr tree in `~/zephyrproject/zephyr`
 
 ---
 
-## Tomorrow (2026-11-18)
+## Tomorrow (2026-11-19)
 
-### A. Wire the ToF sensor to I2C1
+### A. Check the HC-SR501 PIR sensitivity
+The PIR code is in (`sensors/pir.c`, `pir-gpios` on PE7), so this is tuning and testing on the bench.
+
+- [ ] Find the two pots on the back of the board (orientation varies by clone, so check the silkscreen):
+      - **Sx (sensitivity / range)**: roughly 3 m (CCW) to 7 m (CW)
+      - **Tx (time delay)**: how long OUT stays high after a trigger, roughly 3 s (CCW) to 5 min (CW)
+- [ ] Set **Tx fully CCW** (shortest hold) so the turret can react to new motion quickly
+- [ ] Check the trigger jumper: **H = repeat trigger** (stays high while motion continues),
+      **L = single trigger**. H is probably what you want for tracking.
+- [ ] Wait 30–60 s after power-up for it to settle before testing
+- [ ] Walk past at a few distances (1 m, 2 m, 3 m, 5 m) and log what triggers in the serial output
+- [ ] Turn Sx down if it false-triggers (heat sources, fans, sunlight), and up if it misses you at the range you need
+- [ ] Note the re-trigger blind time (~2.5 s after OUT goes low, when it ignores motion) and decide whether the code needs to handle it
+- [ ] Write down the final pot positions / range so it's easy to reproduce
+
+### B. Add a display (OLED or LCD)
+- [ ] Pick a part. Easiest options on the existing I2C1 bus (PB6/PB9), so no new pins:
+      - **SSD1306 128x64 OLED (I2C, addr 0x3C)**: Zephyr `display` driver,
+        `compatible = "solomon,ssd1306"`. Can draw text/graphics (e.g. with CFB or LVGL).
+      - **16x2 HD44780 LCD with PCF8574 I2C backpack (addr 0x27/0x3F)**: text only. Zephyr's `hit,hd44780`
+        auxdisplay driver wants parallel GPIOs, so with the I2C backpack you'd need a small custom driver
+        (or wire it in 4-bit parallel mode and use more GPIOs).
+      - Recommendation: **SSD1306 OLED**. It has an in-tree I2C driver and fits on the bus with
+        the VL53L0X (0x29) and CS43L22 (0x4a), with no address clash.
+- [ ] Add the node under `&i2c1` in `boards/stm32f4_disco.overlay` and set `zephyr,display` in `chosen`
+- [ ] `prj.conf`: `CONFIG_DISPLAY=y` (+ `CONFIG_CHARACTER_FRAMEBUFFER=y` for simple text)
+- [ ] Add a `display.c` / `display.h` alongside the sensors, and show ToF distance, PIR state, and turret position
+- [ ] Wiring: VCC → 3V, GND → GND, SCL → PB6, SDA → PB9
+
+### Done
+- [x] PIR GPIO on PE7 + `sensors/pir.c` / `pir.h` wired into `main.c` (commit `a5d2713`)
+
+### Still open from 2026-11-18: wire the ToF sensor to I2C1
 The overlay node (`tof: vl53l0x@29` on `&i2c1`) is already in place, so this is just hardware.
 
 - [ ] VL53L0X **VIN → 3V**, **GND → GND** (check whether your breakout has its own regulator)
@@ -19,20 +51,6 @@ The overlay node (`tof: vl53l0x@29` on `&i2c1`) is already in place, so this is 
 - [ ] Check for pull-ups on SCL/SDA (most breakouts have them; if not, ~4.7 kΩ to 3.3 V)
 - [ ] XSHUT: tie it high, or wire it to a free GPIO (not PE9–PE12)
 - [ ] Flash and check the serial log for `not ready` / `StaticInit failed`
-
-### B. Add a GPIO for the HC-SR501 PIR
-- [ ] Pick a free pin. Suggested: **PE7**. Avoid PE9–PE12 (steppers), PB6/PB9 (I2C),
-      PA2/PA3 (console UART), PA0 (user button), PD12–PD15 (LEDs), PA5–PA7/PE3/PE0/PE1 (on-board accelerometer).
-- [ ] Wiring: PIR **VCC → 5V**, **GND → GND**, **OUT → PE7** (OUT is 3.3 V logic, safe for the STM32)
-- [ ] Add it under `zephyr,user` in `boards/stm32f4_disco.overlay`:
-
-  ```dts
-  pir-gpios = <&gpioe 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
-  ```
-
-- [ ] In code: `GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), pir_gpios)`, configure it as `GPIO_INPUT`,
-      and either poll it in the loop or set up an edge interrupt (`GPIO_INT_EDGE_RISING`)
-- [ ] Note: the HC-SR501 needs ~30–60 s to settle after power-up, so ignore triggers right after boot
 
 ---
 
@@ -174,8 +192,8 @@ The overlay node (`tof: vl53l0x@29` on `&i2c1`) is already in place, so this is 
       handles power-up). Avoid PE9–PE12 (stepper pins).
 - [ ] First boot: watch serial output for `VL53L0X_StaticInit failed` / `not ready`
       → almost always wiring, pull-ups, or XSHUT.
-- [ ] Pick a GPIO for the HC-SR501 PIR too (README mentions it) — add `pir-gpios` under
-      `zephyr,user`, not on PE9–PE12.
+- [x] Pick a GPIO for the HC-SR501 PIR too (README mentions it) — add `pir-gpios` under
+      `zephyr,user`, not on PE9–PE12. (Done: PE7)
 
 ## 7. Build & verify
 
