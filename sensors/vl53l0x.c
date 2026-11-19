@@ -19,7 +19,7 @@ return 0;
 // ret = return value, if it returns 0 then YAY success
 // the function basically gets the distnace, then converts to mm, then sends to main.c
 
-int vl53l0x_read_mm(int *mm, bool *near)
+float vl53l0x_read_in(float *inch, bool *near)
 {
 	struct sensor_value v;
 	int ret = sensor_sample_fetch(tof);
@@ -31,7 +31,7 @@ int vl53l0x_read_mm(int *mm, bool *near)
 	if (ret) {
 		return ret;
 	}
-	*mm = (int)sensor_value_to_milli(&v);
+	*inch = (float)sensor_value_to_milli(&v) / 25.4;
 
 	ret = sensor_channel_get(tof, SENSOR_CHAN_PROX, &v);
 	if (ret) {

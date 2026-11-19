@@ -49,12 +49,12 @@ int main(void)
 	/* Test pattern: sweep each axis forward and back */
 	while (1) {
 
-        int mm; 
+        float mm; 
         bool near; 
 
-        int ret = vl53l0x_read_mm(&mm, &near); 
+        int ret = vl53l0x_read_in(&mm, &near); 
         if (ret == 0) {
-            LOG_INF("distance %d mm, near = %d", mm, near); 
+            LOG_INF("distance %f in, near = %d", mm, near); 
         }
 
         if( pir_detect(&pir)) {
