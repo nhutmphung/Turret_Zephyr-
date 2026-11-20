@@ -9,6 +9,77 @@ Checked against the Zephyr tree in `~/zephyrproject/zephyr`
 
 ---
 
+## NEXT UP: camera coordinates from Python → turret (log on serial + OLED)
+
+Goal: the Python script on the PC finds the target with the camera, sends its (x, y) pixel
+coordinates to the STM32 over a serial link, and the firmware parses them, logs them with
+`LOG_INF`, and shows them on the SSD1306.
+
+### 1. Pick the serial link
+The Zephyr console (logs) is already on **USART2: PA2 = TX, PA3 = RX** (`zephyr,console`).
+- [ ] **Recommended: a separate UART just for coordinates**, so incoming data and log lines don't
+      mix. E.g. **USART3 on PD8 (TX) / PD9 (RX)** with a 3.3 V USB-TTL adapter
+      (adapter TX → PD9, adapter RX → PD8, GND → GND). Check the pins against the Discovery
+      user manual's pin table before wiring. Avoid PE7, PE9–PE12, PB6, PB9, which are already in use.
+- [ ] Alternative: **USB CDC-ACM** on the board's micro-USB OTG port (PA11/PA12, already
+      `zephyr_udc0` in the board DTS). No extra adapter, and it shows up as `/dev/ttyACM0`, but the
+      USB stack setup takes more config.
+- [ ] Avoid sharing USART2 with the logs unless you're stuck. It works, but parsing gets messy.
+- [ ] **WSL note:** USB serial devices don't show up in WSL by default. Either attach them with
+      `usbipd-win` (`usbipd attach --wsl --busid <id>`), or run the Python script on the Windows
+      side and use `COMx`.
+
+### 2. Define the message format (keep it dumb and line-based)
+- [ ] One ASCII line per frame: `X:<int>,Y:<int>\n`, e.g. `X:320,Y:240\n` (pixel coords of the target center)
+- [ ] `NONE\n` when no target is in frame
+- [ ] 115200 baud, 8N1
+- [ ] Cap the send rate at ~20–30 Hz in Python. The firmware only needs the latest value.
+- [ ] Write down the camera resolution (e.g. 640x480) so the firmware knows where the center is later
+
+### 3. Python side
+- [ ] `pip install pyserial`
+- [ ] Open the port: `ser = serial.Serial("/dev/ttyUSB0", 115200)` (or `COMx` on Windows)
+- [ ] Each frame: `ser.write(f"X:{x},Y:{y}\n".encode())`, or `b"NONE\n"` when nothing is found
+- [ ] Throttle with a timestamp check so it doesn't flood the UART
+
+### 4. Firmware side
+- [ ] Overlay: enable the UART and give it a label/chosen entry, e.g.
+  ```dts
+  / { chosen { turret,coords-uart = &usart3; }; };
+  &usart3 {
+  	pinctrl-0 = <&usart3_tx_pd8 &usart3_rx_pd9>;
+  	pinctrl-names = "default";
+  	current-speed = <115200>;
+  	status = "okay";
+  };
+  ```
+- [ ] `prj.conf`: `CONFIG_SERIAL=y` (already implied), `CONFIG_UART_INTERRUPT_DRIVEN=y`
+- [ ] New `sensors/coords.c` / `coords.h` (add it to `CMakeLists.txt`):
+      - `coords_init()`: `device_is_ready`, set the RX IRQ callback, `uart_irq_rx_enable`
+      - ISR: read bytes into a line buffer, and on `\n` hand the finished line to a `k_msgq`
+        (don't parse or log inside the ISR)
+      - `bool coords_get(int *x, int *y)`: non-blocking; parse the newest line (`strtol`),
+        reject garbage, return false if nothing new
+      - Only the **latest** coordinate matters. Use a 1-deep queue and `k_msgq_purge` before
+        putting, so old frames don't pile up while the steppers block the main loop.
+- [ ] `oled.c`: add something like `oled_show_target(int x, int y, float inches)` so the screen shows
+      `X:320 Y:240` on line 1 and the ToF distance on line 2 (or "no target")
+- [ ] `main.c`: `coords_init()` with the other inits. In the loop:
+      `if (coords_get(&x, &y)) { LOG_INF("target x=%d y=%d", x, y); oled_show_target(...); }`
+- [ ] Heads-up: the current test-sweep loop blocks for seconds per iteration, so coordinates
+      will look laggy. Fine for this step, but tracking will eventually need the steppers in their
+      own thread (or non-blocking moves).
+
+### 5. Test in stages
+- [ ] Firmware first, no camera: send lines by hand and check the serial log and the OLED
+      (`python3 -c "import serial; s=serial.Serial('/dev/ttyUSB0',115200); s.write(b'X:100,Y:50\\n')"`
+      or type into `minicom` / `picocom`)
+- [ ] Send bad input (`X:abc`, very long lines, no newline) and make sure nothing crashes
+- [ ] Then hook up the real camera script and watch the values update live
+- [ ] Later (separate task): turn pixel error from the frame center into pan/tilt steps
+
+---
+
 ## Tomorrow (2026-11-19)
 
 ### A. Check the HC-SR501 PIR sensitivity
@@ -26,21 +97,11 @@ The PIR code is in (`sensors/pir.c`, `pir-gpios` on PE7), so this is tuning and 
 - [ ] Note the re-trigger blind time (~2.5 s after OUT goes low, when it ignores motion) and decide whether the code needs to handle it
 - [ ] Write down the final pot positions / range so it's easy to reproduce
 
-### B. Add a display (OLED or LCD)
-- [ ] Pick a part. Easiest options on the existing I2C1 bus (PB6/PB9), so no new pins:
-      - **SSD1306 128x64 OLED (I2C, addr 0x3C)**: Zephyr `display` driver,
-        `compatible = "solomon,ssd1306"`. Can draw text/graphics (e.g. with CFB or LVGL).
-      - **16x2 HD44780 LCD with PCF8574 I2C backpack (addr 0x27/0x3F)**: text only. Zephyr's `hit,hd44780`
-        auxdisplay driver wants parallel GPIOs, so with the I2C backpack you'd need a small custom driver
-        (or wire it in 4-bit parallel mode and use more GPIOs).
-      - Recommendation: **SSD1306 OLED**. It has an in-tree I2C driver and fits on the bus with
-        the VL53L0X (0x29) and CS43L22 (0x4a), with no address clash.
-- [ ] Add the node under `&i2c1` in `boards/stm32f4_disco.overlay` and set `zephyr,display` in `chosen`
-- [ ] `prj.conf`: `CONFIG_DISPLAY=y` (+ `CONFIG_CHARACTER_FRAMEBUFFER=y` for simple text)
-- [ ] Add a `display.c` / `display.h` alongside the sensors, and show ToF distance, PIR state, and turret position
-- [ ] Wiring: VCC → 3V, GND → GND, SCL → PB6, SDA → PB9
-
 ### Done
+- [x] SSD1306 128x64 OLED on I2C1 @ 0x3C (shares the bus with the ToF @ 0x29):
+      overlay node + `zephyr,display`, `CONFIG_DISPLAY` / `CONFIG_CHARACTER_FRAMEBUFFER` /
+      `CONFIG_HEAP_MEM_POOL_SIZE=2048`, `sensors/oled.c` / `oled.h`, shows ToF distance from
+      `main.c`. Builds clean, **not yet tested on hardware** (run `west flash`)
 - [x] PIR GPIO on PE7 + `sensors/pir.c` / `pir.h` wired into `main.c` (commit `a5d2713`)
 
 ### Still open from 2026-11-18: wire the ToF sensor to I2C1
