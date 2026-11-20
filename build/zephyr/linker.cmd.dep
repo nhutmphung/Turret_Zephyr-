@@ -85,6 +85,7 @@ linker.cmd: \
  /home/nhut/zephyrproject/zephyr/include/zephyr/linker/kobject-data.ld \
  /home/nhut/zephyrproject/zephyr/include/zephyr/linker/cplusplus-ram.ld \
  /home/nhut/zephyrproject/turret/build/zephyr/include/generated/snippets-data-sections.ld \
+ /home/nhut/zephyrproject/zephyr/include/../subsys/fb/check_cfb_fonts.ld \
  /home/nhut/zephyrproject/turret/build/zephyr/include/generated/snippets-dtcm-section.ld \
  /home/nhut/zephyrproject/turret/build/zephyr/include/generated/snippets-sections.ld \
  /home/nhut/zephyrproject/zephyr/include/zephyr/linker/intlist.ld \

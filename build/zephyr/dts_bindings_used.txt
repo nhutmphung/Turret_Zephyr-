@@ -34,6 +34,9 @@
 /home/nhut/zephyrproject/zephyr/dts/bindings/i2c/i2c-device.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/sensor/st,vl53l0x.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/sensor/sensor-device.yaml
+/home/nhut/zephyrproject/zephyr/dts/bindings/display/solomon,ssd1306-i2c.yaml
+/home/nhut/zephyrproject/zephyr/dts/bindings/display/display-controller.yaml
+/home/nhut/zephyrproject/zephyr/dts/bindings/display/solomon,ssd1306-common.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/spi/st,stm32-spi.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/spi/spi-controller.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/spi/st,stm32-spi-common.yaml

@@ -132,6 +132,17 @@
     ]
   ],
   [
+    "CONFIG_DT_HAS_SOLOMON_SSD1306_ENABLED",
+    "n",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/turret/build/Kconfig/Kconfig.dts",
+      14738
+    ]
+  ],
+  [
     "CONFIG_DT_HAS_ST_STM32_ADC_ENABLED",
     "n",
     "bool",
@@ -577,6 +588,7 @@
     "y",
     "select",
     [
+      "SSD1306 && (DT_HAS_SOLOMON_SSD1306_ENABLED || DT_HAS_SOLOMON_SSD1306B_ENABLED || DT_HAS_SOLOMON_SSD1315_ENABLED || DT_HAS_SOLOMON_SSD1309_ENABLED || DT_HAS_SOLOMON_SSD1305_ENABLED || DT_HAS_SINOWEALTH_SH1106_ENABLED || DT_HAS_SINOWEALTH_SH1107_ENABLED || DT_HAS_CHIPWEALTH_CH1115_ENABLED || DT_HAS_CHIPWEALTH_CH1116_ENABLED) && DISPLAY",
       "VL53L0X && DT_HAS_ST_VL53L0X_ENABLED && ZEPHYR_HAL_ST_MODULE && SENSOR"
     ]
   ],
@@ -4341,11 +4353,11 @@
     "CONFIG_HEAP_MEM_POOL_SIZE",
     "y",
     "int",
-    "0",
-    "default",
+    "2048",
+    "assign",
     [
-      "/home/nhut/zephyrproject/zephyr/kernel/Kconfig",
-      683
+      "/home/nhut/zephyrproject/turret/prj.conf",
+      12
     ]
   ],
   [
@@ -5116,9 +5128,115 @@
     "CONFIG_DISPLAY",
     "y",
     "bool",
+    "y",
+    "assign",
+    [
+      "/home/nhut/zephyrproject/turret/prj.conf",
+      7
+    ]
+  ],
+  [
+    "CONFIG_DISPLAY_INIT_PRIORITY",
+    "y",
+    "int",
+    "85",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/display/Kconfig",
+      15
+    ]
+  ],
+  [
+    "CONFIG_DISPLAY_COLOR_PALETTE",
+    "y",
+    "bool",
     null,
     "unset",
     null
+  ],
+  [
+    "CONFIG_DISPLAY_LOG_LEVEL_OFF",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_DISPLAY_LOG_LEVEL_ERR",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_DISPLAY_LOG_LEVEL_WRN",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_DISPLAY_LOG_LEVEL_INF",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_DISPLAY_LOG_LEVEL_DBG",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_DISPLAY_LOG_LEVEL_DEFAULT",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/subsys/logging/Kconfig.template.log_config",
+      5
+    ]
+  ],
+  [
+    "CONFIG_DISPLAY_LOG_LEVEL",
+    "n",
+    "int",
+    "3",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/subsys/logging/Kconfig.template.log_config",
+      36
+    ]
+  ],
+  [
+    "CONFIG_SSD1306",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/display/Kconfig.ssd1306",
+      8
+    ]
+  ],
+  [
+    "CONFIG_SSD1306_DEFAULT_CONTRAST",
+    "y",
+    "int",
+    "128",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/display/Kconfig.ssd1306",
+      39
+    ]
   ],
   [
     "CONFIG_DMA",
@@ -7242,7 +7360,7 @@
     "assign",
     [
       "/home/nhut/zephyrproject/turret/prj.conf",
-      8
+      10
     ]
   ],
   [
@@ -7750,9 +7868,85 @@
     "CONFIG_CHARACTER_FRAMEBUFFER",
     "y",
     "bool",
+    "y",
+    "assign",
+    [
+      "/home/nhut/zephyrproject/turret/prj.conf",
+      8
+    ]
+  ],
+  [
+    "CONFIG_CHARACTER_FRAMEBUFFER_USE_DEFAULT_FONTS",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/subsys/fb/Kconfig",
+      15
+    ]
+  ],
+  [
+    "CONFIG_CFB_LOG_LEVEL_OFF",
+    "y",
+    "bool",
     null,
     "unset",
     null
+  ],
+  [
+    "CONFIG_CFB_LOG_LEVEL_ERR",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_CFB_LOG_LEVEL_WRN",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_CFB_LOG_LEVEL_INF",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_CFB_LOG_LEVEL_DBG",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_CFB_LOG_LEVEL_DEFAULT",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/subsys/logging/Kconfig.template.log_config",
+      5
+    ]
+  ],
+  [
+    "CONFIG_CFB_LOG_LEVEL",
+    "n",
+    "int",
+    "3",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/subsys/logging/Kconfig.template.log_config",
+      36
+    ]
   ],
   [
     "CONFIG_FILE_SYSTEM_LIB_LINK",

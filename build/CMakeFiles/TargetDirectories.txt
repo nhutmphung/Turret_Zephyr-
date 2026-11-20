@@ -152,6 +152,8 @@
 /home/nhut/zephyrproject/turret/build/zephyr/subsys/usb/CMakeFiles/rebuild_cache.dir
 /home/nhut/zephyrproject/turret/build/zephyr/subsys/usb/common/CMakeFiles/edit_cache.dir
 /home/nhut/zephyrproject/turret/build/zephyr/subsys/usb/common/CMakeFiles/rebuild_cache.dir
+/home/nhut/zephyrproject/turret/build/zephyr/subsys/fb/CMakeFiles/edit_cache.dir
+/home/nhut/zephyrproject/turret/build/zephyr/subsys/fb/CMakeFiles/rebuild_cache.dir
 /home/nhut/zephyrproject/turret/build/zephyr/drivers/CMakeFiles/edit_cache.dir
 /home/nhut/zephyrproject/turret/build/zephyr/drivers/CMakeFiles/rebuild_cache.dir
 /home/nhut/zephyrproject/turret/build/zephyr/drivers/firmware/CMakeFiles/edit_cache.dir
@@ -184,6 +186,9 @@
 /home/nhut/zephyrproject/turret/build/zephyr/drivers/console/CMakeFiles/drivers__console.dir
 /home/nhut/zephyrproject/turret/build/zephyr/drivers/console/CMakeFiles/edit_cache.dir
 /home/nhut/zephyrproject/turret/build/zephyr/drivers/console/CMakeFiles/rebuild_cache.dir
+/home/nhut/zephyrproject/turret/build/zephyr/drivers/display/CMakeFiles/drivers__display.dir
+/home/nhut/zephyrproject/turret/build/zephyr/drivers/display/CMakeFiles/edit_cache.dir
+/home/nhut/zephyrproject/turret/build/zephyr/drivers/display/CMakeFiles/rebuild_cache.dir
 /home/nhut/zephyrproject/turret/build/zephyr/drivers/gpio/CMakeFiles/drivers__gpio.dir
 /home/nhut/zephyrproject/turret/build/zephyr/drivers/gpio/CMakeFiles/edit_cache.dir
 /home/nhut/zephyrproject/turret/build/zephyr/drivers/gpio/CMakeFiles/rebuild_cache.dir

@@ -474,6 +474,7 @@ __ramfunc_load_start = LOADADDR(.ramfunc);
  k_obj_type_area : ALIGN_WITH_INPUT { _k_obj_type_list_start = .; KEEP(*(SORT_BY_NAME(._k_obj_type.static.*))); _k_obj_type_list_end = .;; } > RAM AT > FLASH
  net_buf_pool_area : ALIGN_WITH_INPUT { _net_buf_pool_list_start = .; KEEP(*(SORT_BY_NAME(._net_buf_pool.static.*))); _net_buf_pool_list_end = .;; } > RAM AT > FLASH
  /DISCARD/ : { *(.note.GNU-stack) }
+ASSERT(SIZEOF(cfb_font_area) != 0, "cfb_font not defined.")
     __data_region_end = .;
 
  .dtcm_bss (NOLOAD) : ALIGN(4)

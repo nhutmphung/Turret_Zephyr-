@@ -8,6 +8,7 @@ target_sources(app PRIVATE
     sensors/vl53l0x.c
     sensors/stepper.c
     sensors/pir.c
+    sensors/oled.c
 )
 
 target_include_directories(app PRIVATE sensors)

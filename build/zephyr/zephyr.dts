@@ -491,6 +491,21 @@
 				compatible = "st,vl53l0x"; /* in turret/boards/stm32f4_disco.overlay:15 */
 				reg = < 0x29 >;            /* in turret/boards/stm32f4_disco.overlay:16 */
 			};
+
+			/* node '/soc/i2c@40005400/ssd1306@3c' defined in turret/boards/stm32f4_disco.overlay:19 */
+			oled: ssd1306@3c {
+				compatible = "solomon,ssd1306"; /* in turret/boards/stm32f4_disco.overlay:20 */
+				reg = < 0x3c >;                 /* in turret/boards/stm32f4_disco.overlay:21 */
+				width = < 0x80 >;               /* in turret/boards/stm32f4_disco.overlay:22 */
+				height = < 0x40 >;              /* in turret/boards/stm32f4_disco.overlay:23 */
+				segment-offset = < 0x0 >;       /* in turret/boards/stm32f4_disco.overlay:24 */
+				page-offset = < 0x0 >;          /* in turret/boards/stm32f4_disco.overlay:25 */
+				display-offset = < 0x0 >;       /* in turret/boards/stm32f4_disco.overlay:26 */
+				multiplex-ratio = < 0x3f >;     /* in turret/boards/stm32f4_disco.overlay:27 */
+				segment-remap;                  /* in turret/boards/stm32f4_disco.overlay:28 */
+				com-invdir;                     /* in turret/boards/stm32f4_disco.overlay:29 */
+				prechargep = < 0x22 >;          /* in turret/boards/stm32f4_disco.overlay:30 */
+			};
 		};
 
 		/* node '/soc/i2c@40005800' defined in zephyr/dts/arm/st/f4/stm32f4.dtsi:330 */

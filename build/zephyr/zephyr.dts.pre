@@ -3226,6 +3226,20 @@ zephyr_udc0: &usbotg_fs {
   compatible = "st,vl53l0x";
   reg = <0x29>;
  };
+
+ oled: ssd1306@3c {
+                compatible = "solomon,ssd1306";
+                reg = <0x3c>;
+                width = <128>;
+                height = <64>;
+                segment-offset = <0>;
+                page-offset = <0>;
+                display-offset = <0>;
+                multiplex-ratio = <63>;
+                segment-remap;
+                com-invdir;
+                prechargep = <0x22>;
+        };
 };
 # 0 "<command-line>" 2
 # 1 "/home/nhut/zephyrproject/zephyr/misc/empty_file.c"

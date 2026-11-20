@@ -4,12 +4,13 @@
 #include "vl53l0x.h"
 #include "stepper.h"
 #include "pir.h"
+#include "oled.h"
 
 /* Pins come from boards/stm32f4_disco.overlay (zephyr,user node) */
 #define USER_NODE DT_PATH(zephyr_user)
 
 LOG_MODULE_REGISTER(turret, LOG_LEVEL_INF);
-#define STEPS_PER_MOVE   200    /* one revolution on a 1.8 deg motor, full step */
+#define STEPS_PER_MOVE 2000    /* one revolution on a 1.8 deg motor, full step */
 
 static const struct stepper pan = {
 	.name = "pan",
@@ -44,38 +45,53 @@ int main(void)
     }
     LOG_INF("PIR sensor is ready.");
 
+	/* the screen is nice-to-have: if it fails, keep the turret running */
+	bool oled_ok = (oled_init() == 0);
+	if (oled_ok) {
+		LOG_INF("OLED ready.");
+		oled_print("turret", "starting...");
+	} else {
+		LOG_WRN("OLED not found, continuing without display");
+	}
+
 	LOG_INF("turret ready");
 
 	/* Test pattern: sweep each axis forward and back */
 	while (1) {
 
-        float mm; 
-        bool near; 
+		float inch;
+		bool near;
 
-        int ret = vl53l0x_read_in(&mm, &near); 
-        if (ret == 0) {
-            LOG_INF("distance %f in, near = %d", mm, near); 
-        }
+		int ret = vl53l0x_read_in(&inch, &near);
+		if (ret == 0) {
+			LOG_INF("distance %.1f in, near = %d", (double)inch, near);
+			if (oled_ok) {
+				oled_show_distance(inch, near);
+			}
+		} else if (oled_ok) {
+			oled_print("ToF error", NULL);
+		}
 
         if( pir_detect(&pir)) {
             LOG_INF("motion detected");
         }  
+        /*
+		LOG_INF("pan +%d", 5000);
+		stepper_move(&pan, 5000);
+		k_msleep(100);
 
-		LOG_INF("pan +%d", STEPS_PER_MOVE);
-		stepper_move(&pan, STEPS_PER_MOVE);
-		k_msleep(500);
-
-		LOG_INF("pan -%d", STEPS_PER_MOVE);
-		stepper_move(&pan, -STEPS_PER_MOVE);
-		k_msleep(500);
+		LOG_INF("pan -%d", 5000);
+		stepper_move(&pan, -5000);
+		k_msleep(100);
 
 		LOG_INF("tilt +%d", STEPS_PER_MOVE);
 		stepper_move(&tilt, STEPS_PER_MOVE);
-		k_msleep(500);
+		k_msleep(100);
 
 		LOG_INF("tilt -%d", STEPS_PER_MOVE);
 		stepper_move(&tilt, -STEPS_PER_MOVE);
-		k_msleep(500);
+		k_msleep(100);
+        */
 	}
 
 	return 0;
