@@ -1,82 +1,167 @@
-# TODO: get the VL53L0X ToF sensor building and running
+# Turret TODO
 
-Current state: `sensors/vlf53l0x.c` exists but **is not compiled** (it's not in `CMakeLists.txt`),
-and there's **no devicetree node** for the sensor. So the build passes now only because the
-sensor code is never touched. Once it's wired in, the items below will each break the build or the run.
+Current state (2026-11-21): steppers (pan/tilt), VL53L0X ToF (inches), HC-SR501 PIR, SSD1306 OLED
+and the Python → USART2 coordinate link are all in and building. `main.c` runs `startup_seq()`,
+then a loop that reads coords + ToF + PIR (stepper test sweep is commented out).
 
-Checked against the Zephyr tree in `~/zephyrproject/zephyr`
-(`dts/bindings/sensor/st,vl53l0x.yaml`, `drivers/sensor/st/vl53l0x/`).
+The older ToF bring-up notes further down (sections 1–8) are kept for reference; most of them are done.
 
 ---
 
-## NEXT UP: camera coordinates from Python → turret (log on serial + OLED)
+## NEXT UP (2026-11-21)
+
+### 1. Show the target on the OLED
+- [ ] Add `oled_show_target(const struct coords *c, float inches)` (or `int x, int y, float inches`) to `oled.c` / `oled.h`
+      - line 1: `X:320 Y:231`, or `no target` when `found == false`
+      - line 2: the ToF distance, e.g. `2.8 in NEAR`
+- [ ] In `main.c`, keep the last `struct coords` around (file-scope or before the loop) so the screen
+      still has something to show on loop passes where `coords_get()` returns false
+- [ ] Only redraw the OLED when something changed, or at most every ~100–200 ms. Each
+      `cfb_framebuffer_finalize` is a 1 KB I2C transfer (~25 ms at 100 kHz)
+- [ ] Optional: `clock-frequency = <I2C_BITRATE_FAST>;` on `&i2c1` for 400 kHz if redraws slow the loop
+
+### 2. Cut down the serial log noise
+- [ ] The `distance ... in` line prints every pass (~every 50 ms) and buries the coords lines
+- [ ] Options: log only when the distance changes by more than ~0.5 in, log every Nth pass, or
+      make it `LOG_DBG` (hidden at `LOG_LEVEL_INF`)
+- [ ] Same idea for `target x=.. y=..`: log on change, not every message
+- [ ] Python side: drop the `print` in the camera loop once things are stable. The board's
+      `target x=.. y=..` log already confirms what arrived, and two threads printing at once
+      jumbles the lines.
+
+### 3. Python script hygiene
+- [ ] Always send whole numbers: `f"X:{int(x)},Y:{int(y)}\n"` (`X:320.0` is rejected)
+- [ ] Clamp to the frame: `max(0, min(x, W - 1))`, since negative / off-frame values are rejected
+- [ ] Send `NONE\n` when the target is lost so the board knows to stop tracking
+- [ ] Write down the camera resolution (e.g. 640x480) and frame center here: ______
+
+### 4. Commit the coords work
+- [ ] Delete the misspelled draft `drivers/cords.c` (untracked, not compiled, fully replaced by `drivers/coords.c`)
+- [ ] Commit `drivers/coords.c`, `drivers/coords.h`, `boards/stm32f4_disco.overlay`, `CMakeLists.txt`,
+      `prj.conf`, `src/main.c`, `todo.md`
+- [ ] Consider doing the `build/` cleanup from "Repo housekeeping" first, so build outputs stop showing up in every commit
+
+### 5. Actual tracking: pixel offset → pan/tilt steps
+- [ ] Error from frame center: `err_x = x - CENTER_X`, `err_y = y - CENTER_Y` (e.g. center 320, 240 for 640x480)
+- [ ] Dead zone: ignore small errors (e.g. ±10 px) so the turret doesn't jitter around the target
+- [ ] Start with a simple proportional move: `steps = err * K`, clamp to a max step per update, tune `K` on the bench
+- [ ] Check directions: if the turret moves away from the target, flip the sign (or the DIR pin polarity) for that axis
+- [ ] Don't move on `NONE`. Optionally sweep or return home after N seconds with no target.
+- [ ] **The steppers must stop blocking the loop.** `stepper_move()` blocks until the move is done,
+      so coords and the ToF go stale while it runs. Options:
+      - move a few steps per loop pass toward the target (simplest)
+      - a stepper thread (`K_THREAD_DEFINE`) that chases a target position the main loop updates
+      - timer/PWM-driven step pulses (most work, smoothest)
+- [ ] Decide what the PIR and ToF do in tracking mode (e.g. PIR wakes the turret, ToF distance gates firing)
+
+---
+
+## DONE (2026-11-21): camera coordinates from Python → turret over USART2
+
+Working end to end: camera → Python → USART2 (PA3) → `drivers/coords.c` ISR → parser → `LOG_INF`.
+Lesson learned: the Python script was **printing** `X:..,Y:..` but **sending** `309,227` (no labels),
+so every line hit `bad coords line`. Build the message once and use the same string for `print` and `ser.write`.
+Open items left in this section have moved to NEXT UP above, or are optional upgrades.
 
 Goal: the Python script on the PC finds the target with the camera, sends its (x, y) pixel
-coordinates to the STM32 over a serial link, and the firmware parses them, logs them with
-`LOG_INF`, and shows them on the SSD1306.
+coordinates to the STM32 over serial, and the firmware parses them, logs them with `LOG_INF`,
+and shows them on the SSD1306.
 
-### 1. Pick the serial link
-The Zephyr console (logs) is already on **USART2: PA2 = TX, PA3 = RX** (`zephyr,console`).
-- [ ] **Recommended: a separate UART just for coordinates**, so incoming data and log lines don't
-      mix. E.g. **USART3 on PD8 (TX) / PD9 (RX)** with a 3.3 V USB-TTL adapter
-      (adapter TX → PD9, adapter RX → PD8, GND → GND). Check the pins against the Discovery
-      user manual's pin table before wiring. Avoid PE7, PE9–PE12, PB6, PB9, which are already in use.
-- [ ] Alternative: **USB CDC-ACM** on the board's micro-USB OTG port (PA11/PA12, already
-      `zephyr_udc0` in the board DTS). No extra adapter, and it shows up as `/dev/ttyACM0`, but the
-      USB stack setup takes more config.
-- [ ] Avoid sharing USART2 with the logs unless you're stuck. It works, but parsing gets messy.
-- [ ] **WSL note:** USB serial devices don't show up in WSL by default. Either attach them with
-      `usbipd-win` (`usbipd attach --wsl --busid <id>`), or run the Python script on the Windows
-      side and use `COMx`.
+### 1. Serial link: share USART2 with the logs (no new hardware)
+The Zephyr console (logs) is already on **USART2: PA2 = TX, PA3 = RX** (`zephyr,console`), going
+to the one USB-TTL adapter. A UART has a separate wire for each direction, so both jobs fit on it:
+
+```
+STM32 PA2 (TX) ──────► adapter RX   logs:   STM32 → PC   (already working)
+STM32 PA3 (RX) ◄────── adapter TX   coords: PC → STM32   (new)
+STM32 GND      ─────── adapter GND
+```
+
+- [x] Check the **adapter TX → PA3** wire is actually connected. If you only ever read logs, you
+      may have wired just RX + GND. Make sure the adapter's logic level is set to **3.3 V**, not 5 V.
+- [x] **Only one PC program can open the port at a time.** The Python script takes over from
+      minicom/picocom: it sends coordinates **and** prints the log lines it receives (see step 3).
+      Close minicom before running it.
+- [x] Keep `CONFIG_SHELL` **off**. The shell would also read incoming bytes on USART2 and swallow the
+      coordinates.
+- [x] **WSL note:** the adapter must be attached to WSL with `usbipd-win`
+      (`usbipd attach --wsl --busid <id>`), or run the Python script on the Windows side with `COMx`.
+      The camera may also need to be attached the same way, or it's easier to run the whole
+      script on Windows.
+
+Upgrade paths for later, if sharing gets annoying (the firmware code stays the same, only the
+overlay/chosen entry changes):
+- [ ] **Second USB-TTL adapter (~$5)** on a separate UART, e.g. USART3 on PD8 (TX) / PD9 (RX)
+      (check against the Discovery user manual's pin table; avoid PE7, PE9–PE12, PB6, PB9). Logs and
+      coordinates on separate ports, and minicom can stay open.
+- [ ] **USB CDC-ACM** on the board's micro-USB OTG port (PA11/PA12, `zephyr_udc0` in the board
+      DTS). No adapter, shows up as `/dev/ttyACM0`, but needs more USB config in Zephyr.
 
 ### 2. Define the message format (keep it dumb and line-based)
-- [ ] One ASCII line per frame: `X:<int>,Y:<int>\n`, e.g. `X:320,Y:240\n` (pixel coords of the target center)
-- [ ] `NONE\n` when no target is in frame
-- [ ] 115200 baud, 8N1
-- [ ] Cap the send rate at ~20–30 Hz in Python. The firmware only needs the latest value.
+- [x] One ASCII line per frame: `X:<int>,Y:<int>\n`, e.g. `X:320,Y:240\n` (pixel coords of the target center)
+- [x] `NONE\n` when no target is in frame
+- [x] 115200 baud, 8N1 (same settings the console already uses)
+- [x] Cap the send rate at ~20–30 Hz in Python. The firmware only needs the latest value.
 - [ ] Write down the camera resolution (e.g. 640x480) so the firmware knows where the center is later
 
-### 3. Python side
-- [ ] `pip install pyserial`
-- [ ] Open the port: `ser = serial.Serial("/dev/ttyUSB0", 115200)` (or `COMx` on Windows)
-- [ ] Each frame: `ser.write(f"X:{x},Y:{y}\n".encode())`, or `b"NONE\n"` when nothing is found
-- [ ] Throttle with a timestamp check so it doesn't flood the UART
+### 3. Python side (sender + log viewer in one script)
+- [x] `pip install pyserial`
+- [x] Open the port once: `ser = serial.Serial("/dev/ttyUSB0", 115200, timeout=0.1)` (or `COMx` on Windows)
+- [x] Start a background thread that prints the STM32 logs, since minicom is no longer reading them:
+  ```python
+  import threading
+
+  def print_logs():
+      while True:
+          line = ser.readline()
+          if line:
+              print("[stm32]", line.decode(errors="replace").rstrip())
+
+  threading.Thread(target=print_logs, daemon=True).start()
+  ```
+- [x] Each frame in the camera loop: `ser.write(f"X:{x},Y:{y}\n".encode())`, or `b"NONE\n"` when nothing is found
+- [x] Throttle with a timestamp check so it doesn't flood the UART
 
 ### 4. Firmware side
-- [ ] Overlay: enable the UART and give it a label/chosen entry, e.g.
+- [x] Overlay: USART2 is already enabled by the board, so **no new UART node**. Add a chosen entry so
+      the code doesn't hard-code which UART it uses (moving to USART3 later is a one-line change):
   ```dts
-  / { chosen { turret,coords-uart = &usart3; }; };
-  &usart3 {
-  	pinctrl-0 = <&usart3_tx_pd8 &usart3_rx_pd9>;
-  	pinctrl-names = "default";
-  	current-speed = <115200>;
-  	status = "okay";
+  / {
+  	chosen {
+  		turret,coords-uart = &usart2;
+  	};
   };
   ```
-- [ ] `prj.conf`: `CONFIG_SERIAL=y` (already implied), `CONFIG_UART_INTERRUPT_DRIVEN=y`
-- [ ] New `sensors/coords.c` / `coords.h` (add it to `CMakeLists.txt`):
-      - `coords_init()`: `device_is_ready`, set the RX IRQ callback, `uart_irq_rx_enable`
+  In code: `DEVICE_DT_GET(DT_CHOSEN(turret_coords_uart))`
+- [x] `prj.conf`: `CONFIG_SERIAL=y` (already implied), `CONFIG_UART_INTERRUPT_DRIVEN=y`
+- [x] New `drivers/coords.c` / `coords.h` (ended up in `drivers/`, added to the include dirs too) (add it to `CMakeLists.txt`):
+      - `coords_init()`: `device_is_ready`, set the RX IRQ callback, `uart_irq_rx_enable`. Only
+        enable **RX** interrupts. Logging handles TX on the same UART, so don't touch the TX IRQ.
       - ISR: read bytes into a line buffer, and on `\n` hand the finished line to a `k_msgq`
-        (don't parse or log inside the ISR)
+        (don't parse or log inside the ISR). Drop the line if it overflows the buffer.
       - `bool coords_get(int *x, int *y)`: non-blocking; parse the newest line (`strtol`),
         reject garbage, return false if nothing new
       - Only the **latest** coordinate matters. Use a 1-deep queue and `k_msgq_purge` before
         putting, so old frames don't pile up while the steppers block the main loop.
-- [ ] `oled.c`: add something like `oled_show_target(int x, int y, float inches)` so the screen shows
+- [ ] → moved to NEXT UP #1. `oled.c`: add something like `oled_show_target(int x, int y, float inches)` so the screen shows
       `X:320 Y:240` on line 1 and the ToF distance on line 2 (or "no target")
-- [ ] `main.c`: `coords_init()` with the other inits. In the loop:
+- [x] `main.c`: `coords_init()` with the other inits. In the loop:
       `if (coords_get(&x, &y)) { LOG_INF("target x=%d y=%d", x, y); oled_show_target(...); }`
-- [ ] Heads-up: the current test-sweep loop blocks for seconds per iteration, so coordinates
+      The `LOG_INF` goes back out on PA2 and shows up in the Python script's `[stm32]` output, which is
+      a handy confirmation that the board really received the coordinate.
+- [x] Heads-up: the current test-sweep loop blocks for seconds per iteration, so coordinates
       will look laggy. Fine for this step, but tracking will eventually need the steppers in their
       own thread (or non-blocking moves).
 
 ### 5. Test in stages
-- [ ] Firmware first, no camera: send lines by hand and check the serial log and the OLED
-      (`python3 -c "import serial; s=serial.Serial('/dev/ttyUSB0',115200); s.write(b'X:100,Y:50\\n')"`
-      or type into `minicom` / `picocom`)
-- [ ] Send bad input (`X:abc`, very long lines, no newline) and make sure nothing crashes
-- [ ] Then hook up the real camera script and watch the values update live
-- [ ] Later (separate task): turn pixel error from the frame center into pan/tilt steps
+- [x] Firmware first, no camera. Close minicom, then send a line by hand:
+      `python3 -c "import serial,time; s=serial.Serial('/dev/ttyUSB0',115200); s.write(b'X:100,Y:50\n'); time.sleep(0.5); print(s.read_all().decode(errors='replace'))"`
+      You should see `target x=100 y=50` in the printed output, and the same values on the OLED.
+      (Or use `picocom /dev/ttyUSB0 -b 115200` and type `X:100,Y:50` + Enter. It shows logs and sends what you type.
+      You may need `--omap crlf` so Enter sends `\n`.)
+- [x] Send bad input (`X:abc`, very long lines, no newline) and make sure nothing crashes
+- [x] Then hook up the real camera script and watch the values update live
+- [ ] → moved to NEXT UP #5. Later (separate task): turn pixel error from the frame center into pan/tilt steps
 
 ---
 

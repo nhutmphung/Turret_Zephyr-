@@ -9,8 +9,9 @@ target_sources(app PRIVATE
     sensors/stepper.c
     sensors/pir.c
     sensors/oled.c
+    drivers/coords.c
 )
 
-target_include_directories(app PRIVATE sensors)
+target_include_directories(app PRIVATE sensors drivers)
 
 

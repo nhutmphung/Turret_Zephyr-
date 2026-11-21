@@ -9,6 +9,7 @@ set_target_properties(${DEVICETREE_TARGET}
     "DT_CHOSEN|zephyr,flash" "/soc/flash-controller@40023c00/flash@8000000"
     "DT_CHOSEN|zephyr,dtcm" "/memory@10000000"
     "DT_CHOSEN|zephyr,canbus" "/soc/can@40006800"
+    "DT_CHOSEN|turret,coords-uart" "/soc/serial@40004400"
     "DT_ALIAS|die-temp0" "/dietemp"
     "DT_ALIAS|volt-sensor0" "/vref"
     "DT_ALIAS|volt-sensor1" "/vbat"

@@ -1,5 +1,10 @@
 
 / {
+	chosen {
+		/* UART the python coords come in on (shared with the log console) */
+		turret,coords-uart = &usart2;
+	};
+
 	zephyr,user {
         pir-gpios       = <&gpioe 7  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>; 
 		pan-step-gpios  = <&gpioe 9  GPIO_ACTIVE_HIGH>;

@@ -3211,6 +3211,11 @@ zephyr_udc0: &usbotg_fs {
 # 1 "/home/nhut/zephyrproject/turret/boards/stm32f4_disco.overlay" 1
 
 / {
+ chosen {
+
+  turret,coords-uart = &usart2;
+ };
+
  zephyr,user {
         pir-gpios = <&gpioe 7 ((0 << 0) | (1 << 5))>;
   pan-step-gpios = <&gpioe 9 (0 << 0)>;

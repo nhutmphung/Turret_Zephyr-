@@ -5,12 +5,15 @@
 #include "stepper.h"
 #include "pir.h"
 #include "oled.h"
+#include "coords.h"
 
 /* Pins come from boards/stm32f4_disco.overlay (zephyr,user node) */
 #define USER_NODE DT_PATH(zephyr_user)
 
 LOG_MODULE_REGISTER(turret, LOG_LEVEL_INF);
 #define STEPS_PER_MOVE 2000    /* one revolution on a 1.8 deg motor, full step */
+
+static bool oled_ok;   // set by startup_seq(), used in the main loop
 
 static const struct stepper pan = {
 	.name = "pan",
@@ -29,24 +32,26 @@ static const struct pir_sensor pir = {
     .pin = GPIO_DT_SPEC_GET(USER_NODE, pir_gpios),
 };
 
-int main(void)
+// brings up every peripheral. returns 0 if the turret can run, negative if not.
+static int startup_seq(void)
 {
 	if (stepper_init(&pan) < 0 || stepper_init(&tilt) < 0) {
-		return 0;
+		return -ENODEV;
 	}
-    LOG_INF("Steppers is ready.");
-    if(vl53l0x_init() < 0) {
-        return 0;
-    }
-    LOG_INF("ToF sensor is ready.");
+	LOG_INF("Steppers ready.");
 
-    if(pir_init(&pir) < 0) {
-        return 0;
-    }
-    LOG_INF("PIR sensor is ready.");
+	if (vl53l0x_init() < 0) {
+		return -ENODEV;
+	}
+	LOG_INF("ToF sensor ready.");
+
+	if (pir_init(&pir) < 0) {
+		return -ENODEV;
+	}
+	LOG_INF("PIR sensor ready.");
 
 	/* the screen is nice-to-have: if it fails, keep the turret running */
-	bool oled_ok = (oled_init() == 0);
+	oled_ok = (oled_init() == 0);   // no "bool" here: assigns the global instead of making a new local
 	if (oled_ok) {
 		LOG_INF("OLED ready.");
 		oled_print("turret", "starting...");
@@ -54,10 +59,33 @@ int main(void)
 		LOG_WRN("OLED not found, continuing without display");
 	}
 
+	if (coords_init() < 0) {
+		return -ENODEV;
+	}
+	LOG_INF("Coords UART ready.");
+
 	LOG_INF("turret ready");
+	return 0;
+}
+
+int main(void)
+{
+	if (startup_seq() < 0) {
+		LOG_ERR("startup failed, stopping");
+		return 0;
+	}
 
 	/* Test pattern: sweep each axis forward and back */
 	while (1) {
+
+		struct coords tgt;
+		if (coords_get(&tgt)) {
+			if (tgt.found) {
+				LOG_INF("target x=%d y=%d", tgt.x, tgt.y);
+			} else {
+				LOG_INF("no target");
+			}
+		}
 
 		float inch;
 		bool near;
@@ -92,6 +120,8 @@ int main(void)
 		stepper_move(&tilt, -STEPS_PER_MOVE);
 		k_msleep(100);
         */
+
+		k_msleep(50);   // keeps the loop from flooding the serial log
 	}
 
 	return 0;

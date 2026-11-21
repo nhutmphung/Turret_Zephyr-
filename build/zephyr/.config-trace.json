@@ -669,9 +669,12 @@
     "CONFIG_UART_INTERRUPT_DRIVEN",
     "y",
     "bool",
-    null,
-    "unset",
-    null
+    "y",
+    "assign",
+    [
+      "/home/nhut/zephyrproject/turret/prj.conf",
+      13
+    ]
   ],
   [
     "CONFIG_I2C_TRANSFER_TIMEOUT_MS",

@@ -18,6 +18,7 @@
 		zephyr,flash = &flash0;               /* in zephyr/boards/st/stm32f4_disco/stm32f4_disco.dts:20 */
 		zephyr,dtcm = &ccm0;                  /* in zephyr/boards/st/stm32f4_disco/stm32f4_disco.dts:21 */
 		zephyr,canbus = &can2;                /* in zephyr/boards/st/stm32f4_disco/stm32f4_disco.dts:22 */
+		turret,coords-uart = &usart2;         /* in turret/boards/stm32f4_disco.overlay:5 */
 	};
 
 	/* node '/aliases' defined in zephyr/dts/common/skeleton.dtsi:15 */
@@ -233,7 +234,7 @@
 				#gpio-cells = < 0x2 >;        /* in zephyr/dts/arm/st/f4/stm32f4.dtsi:247 */
 				reg = < 0x40021000 0x400 >;   /* in zephyr/dts/arm/st/f4/stm32f4.dtsi:248 */
 				clocks = < &rcc 0x30 0x10 >;  /* in zephyr/dts/arm/st/f4/stm32f4.dtsi:249 */
-				phandle = < 0x2a >;           /* in turret/boards/stm32f4_disco.overlay:4 */
+				phandle = < 0x2a >;           /* in turret/boards/stm32f4_disco.overlay:9 */
 			};
 
 			/* node '/soc/pin-controller@40020000/gpio@40021400' defined in zephyr/dts/arm/st/f4/stm32f4.dtsi:252 */
@@ -486,25 +487,25 @@
 				reset-gpios = < &gpiod 0x4 0x0 >; /* in zephyr/boards/st/stm32f4_disco/stm32f4_disco.dts:234 */
 			};
 
-			/* node '/soc/i2c@40005400/vl53l0x@29' defined in turret/boards/stm32f4_disco.overlay:14 */
+			/* node '/soc/i2c@40005400/vl53l0x@29' defined in turret/boards/stm32f4_disco.overlay:19 */
 			tof: vl53l0x@29 {
-				compatible = "st,vl53l0x"; /* in turret/boards/stm32f4_disco.overlay:15 */
-				reg = < 0x29 >;            /* in turret/boards/stm32f4_disco.overlay:16 */
+				compatible = "st,vl53l0x"; /* in turret/boards/stm32f4_disco.overlay:20 */
+				reg = < 0x29 >;            /* in turret/boards/stm32f4_disco.overlay:21 */
 			};
 
-			/* node '/soc/i2c@40005400/ssd1306@3c' defined in turret/boards/stm32f4_disco.overlay:19 */
+			/* node '/soc/i2c@40005400/ssd1306@3c' defined in turret/boards/stm32f4_disco.overlay:24 */
 			oled: ssd1306@3c {
-				compatible = "solomon,ssd1306"; /* in turret/boards/stm32f4_disco.overlay:20 */
-				reg = < 0x3c >;                 /* in turret/boards/stm32f4_disco.overlay:21 */
-				width = < 0x80 >;               /* in turret/boards/stm32f4_disco.overlay:22 */
-				height = < 0x40 >;              /* in turret/boards/stm32f4_disco.overlay:23 */
-				segment-offset = < 0x0 >;       /* in turret/boards/stm32f4_disco.overlay:24 */
-				page-offset = < 0x0 >;          /* in turret/boards/stm32f4_disco.overlay:25 */
-				display-offset = < 0x0 >;       /* in turret/boards/stm32f4_disco.overlay:26 */
-				multiplex-ratio = < 0x3f >;     /* in turret/boards/stm32f4_disco.overlay:27 */
-				segment-remap;                  /* in turret/boards/stm32f4_disco.overlay:28 */
-				com-invdir;                     /* in turret/boards/stm32f4_disco.overlay:29 */
-				prechargep = < 0x22 >;          /* in turret/boards/stm32f4_disco.overlay:30 */
+				compatible = "solomon,ssd1306"; /* in turret/boards/stm32f4_disco.overlay:25 */
+				reg = < 0x3c >;                 /* in turret/boards/stm32f4_disco.overlay:26 */
+				width = < 0x80 >;               /* in turret/boards/stm32f4_disco.overlay:27 */
+				height = < 0x40 >;              /* in turret/boards/stm32f4_disco.overlay:28 */
+				segment-offset = < 0x0 >;       /* in turret/boards/stm32f4_disco.overlay:29 */
+				page-offset = < 0x0 >;          /* in turret/boards/stm32f4_disco.overlay:30 */
+				display-offset = < 0x0 >;       /* in turret/boards/stm32f4_disco.overlay:31 */
+				multiplex-ratio = < 0x3f >;     /* in turret/boards/stm32f4_disco.overlay:32 */
+				segment-remap;                  /* in turret/boards/stm32f4_disco.overlay:33 */
+				com-invdir;                     /* in turret/boards/stm32f4_disco.overlay:34 */
+				prechargep = < 0x22 >;          /* in turret/boards/stm32f4_disco.overlay:35 */
 			};
 		};
 
@@ -1599,12 +1600,12 @@
 		};
 	};
 
-	/* node '/zephyr,user' defined in turret/boards/stm32f4_disco.overlay:3 */
+	/* node '/zephyr,user' defined in turret/boards/stm32f4_disco.overlay:8 */
 	zephyr,user {
-		pir-gpios = < &gpioe 0x7 0x20 >;      /* in turret/boards/stm32f4_disco.overlay:4 */
-		pan-step-gpios = < &gpioe 0x9 0x0 >;  /* in turret/boards/stm32f4_disco.overlay:5 */
-		pan-dir-gpios = < &gpioe 0xa 0x0 >;   /* in turret/boards/stm32f4_disco.overlay:6 */
-		tilt-step-gpios = < &gpioe 0xb 0x0 >; /* in turret/boards/stm32f4_disco.overlay:7 */
-		tilt-dir-gpios = < &gpioe 0xc 0x0 >;  /* in turret/boards/stm32f4_disco.overlay:8 */
+		pir-gpios = < &gpioe 0x7 0x20 >;      /* in turret/boards/stm32f4_disco.overlay:9 */
+		pan-step-gpios = < &gpioe 0x9 0x0 >;  /* in turret/boards/stm32f4_disco.overlay:10 */
+		pan-dir-gpios = < &gpioe 0xa 0x0 >;   /* in turret/boards/stm32f4_disco.overlay:11 */
+		tilt-step-gpios = < &gpioe 0xb 0x0 >; /* in turret/boards/stm32f4_disco.overlay:12 */
+		tilt-dir-gpios = < &gpioe 0xc 0x0 >;  /* in turret/boards/stm32f4_disco.overlay:13 */
 	};
 };
