@@ -1,3 +1,4 @@
+#include <stdlib.h>          // abs()
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/logging/log.h>
@@ -11,7 +12,15 @@
 #define USER_NODE DT_PATH(zephyr_user)
 
 LOG_MODULE_REGISTER(turret, LOG_LEVEL_INF);
-#define STEPS_PER_MOVE 2000    /* one revolution on a 1.8 deg motor, full step */
+#define STEPS_PER_MOVE 2000    // one revolution on a 1.8 deg motor, full step 
+
+#define CENTERX       320     // frame center for a 640x480 camera
+#define CENTERY       240
+#define DEADZONE_PX   10      // ignore errors smaller than this (px)
+#define MAX_STEPS     200     // most steps allowed in one correction
+
+static float Kp_PAN  = 1.0f;  // steps per pixel. start low, tune up (negative flips direction)
+static float Kp_TILT = 1.0f;
 
 static bool oled_ok;   // set by startup_seq(), used in the main loop
 
@@ -75,16 +84,16 @@ int main(void)
 		return 0;
 	}
 
-    struct coords tgt = { .found = false }; 
-	while (1) {
+	struct coords tgt = { .found = false };   // newest target, kept between loop passes
 
-        float inch;
-        bool near; 
-        bool tgtFound;
+	while (1) {
+		float inch = 0.0f;
+		bool near = false;
 
 		int ret = vl53l0x_read_in(&inch, &near);
 
-		if (coords_get(&tgt)) {
+		bool new_coords = coords_get(&tgt);   // true only on passes where a new message arrived
+		if (new_coords) {
 			if (tgt.found) {
 				LOG_INF("target x=%d y=%d", tgt.x, tgt.y);
 			} else {
@@ -92,16 +101,37 @@ int main(void)
 			}
 		}
 
-        if (oled_ok) {
-            oled_show_coords(tgt.x, tgt.y, tgt.found, inch);
-        }
+		if (oled_ok) {
+			oled_show_coords(tgt.x, tgt.y, tgt.found, inch);
+		}
 
 		if (ret == 0) {
-			LOG_INF("distance %.1f in, near = %d", (double)inch, near);
-        }
-        if( pir_detect(&pir)) {
-            LOG_INF("motion detected");
-        }  
+			//LOG_INF("distance %.1f in, near = %d", (double)inch, near);
+		}
+
+		if (pir_detect(&pir)) {
+			LOG_INF("motion detected");
+		}
+
+		// track: only on a NEW message that actually has a target,
+		// so the same correction is never applied twice
+		if (new_coords && tgt.found) {
+			int errX = tgt.x - CENTERX;
+			int errY = tgt.y - CENTERY;
+
+			if (abs(errX) > DEADZONE_PX) {
+				int stepsX = CLAMP((int)(errX * Kp_PAN), -MAX_STEPS, MAX_STEPS);
+				stepper_move(&pan, stepsX*100);
+                LOG_INF("steperY move : %d", stepsX);
+			}
+			if (abs(errY) > DEADZONE_PX) {
+				int stepsY = CLAMP((int)(errY * Kp_TILT), -MAX_STEPS, MAX_STEPS);
+				stepper_move(&tilt, stepsY*100);
+                LOG_INF("steperX move : %d", stepsY);
+
+			}
+		}
+
         /*
 		LOG_INF("pan +%d", 5000);
 		stepper_move(&pan, 5000);

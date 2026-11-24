@@ -1,56 +1,105 @@
 # Turret TODO
 
-Current state (2026-11-21): steppers (pan/tilt), VL53L0X ToF (inches), HC-SR501 PIR, SSD1306 OLED
-and the Python → USART2 coordinate link are all in and building. `main.c` runs `startup_seq()`,
-then a loop that reads coords + ToF + PIR (stepper test sweep is commented out).
+Current state (2026-11-23): steppers (pan/tilt), VL53L0X ToF (inches), HC-SR501 PIR, SSD1306 OLED
+and the Python → USART2 coordinate link are all in. The OLED shows the target coords + distance
+(`oled_show_coords`). `main.c` now has a first **proportional tracking** loop (dead zone, step clamp,
+only moves on a new target), which builds clean but **has not been run with the motors yet**.
 
 The older ToF bring-up notes further down (sections 1–8) are kept for reference; most of them are done.
 
 ---
 
-## NEXT UP (2026-11-21)
+## TOMORROW (2026-11-24): bench-test the tracking values
 
-### 1. Show the target on the OLED
-- [ ] Add `oled_show_target(const struct coords *c, float inches)` (or `int x, int y, float inches`) to `oled.c` / `oled.h`
-      - line 1: `X:320 Y:231`, or `no target` when `found == false`
-      - line 2: the ToF distance, e.g. `2.8 in NEAR`
-- [ ] In `main.c`, keep the last `struct coords` around (file-scope or before the loop) so the screen
-      still has something to show on loop passes where `coords_get()` returns false
-- [ ] Only redraw the OLED when something changed, or at most every ~100–200 ms. Each
-      `cfb_framebuffer_finalize` is a 1 KB I2C transfer (~25 ms at 100 kHz)
+The tracking code is in `src/main.c` (top-of-file constants + the `if (new_coords && tgt.found)` block).
+Goal for tomorrow: find the numbers that make the turret turn **toward** the target, quickly, without overshooting.
+
+Starting values in `main.c`:
+
+| Constant | Now | What it does |
+|---|---|---|
+| `CENTERX` / `CENTERY` | 320 / 240 | frame center (half the camera resolution) |
+| `Kp_PAN` / `Kp_TILT` | 1.0 / 1.0 | steps per pixel of error (negative flips direction) |
+| `DEADZONE_PX` | 10 | errors smaller than this are ignored |
+| `MAX_STEPS` | 200 | most steps in one correction (~0.2 s per axis at 1 ms/step) |
+
+### 0. Before powering the motors
+- [ ] Confirm the camera resolution in the Python script and set `CENTERX` / `CENTERY` to half of it
+- [ ] Flash with the **motor driver unpowered**, then check the serial log and the OLED: `target x=.. y=..`, distance, `no target` on `NONE`
+- [ ] Temporarily log the math so you can sanity-check it without anything moving:
+      `LOG_INF("err %d,%d steps %d,%d", errX, errY, stepsX, stepsY);`
+- [ ] Make sure the turret can't hit anything or wrap its cables if an axis runs the wrong way.
+      Keep a hand on the driver power.
+
+### 1. Directions (one axis at a time)
+- [ ] Power the motors. Put the target slightly **left** of center: pan should turn toward it
+- [ ] If pan turns away, make `Kp_PAN` negative (`-1.0f`) and re-test
+- [ ] Same for tilt: target slightly **above** center, flip `Kp_TILT` if it goes the wrong way
+- [ ] Note the final signs here: pan ____ tilt ____
+
+### 2. Gains (`Kp_PAN`, `Kp_TILT`)
+- [ ] Start at 1.0. If it barely creeps toward the target, try 2, 4, 8...
+- [ ] If it overshoots and swings back and forth, halve it
+- [ ] Goal: settles on the target in a few corrections with no back-and-forth
+- [ ] Pan and tilt will probably need different values (different load / gearing)
+- [ ] Useful number to measure: **steps per pixel**. Move one axis a known number of steps
+      (e.g. 100) and see how many pixels the target shifts. `Kp ≈ 1 / (pixels per step)` is the
+      "one jump to center" gain; use somewhat less than that to avoid overshoot.
+- [ ] Final values: `Kp_PAN` ____ `Kp_TILT` ____
+
+### 3. Dead zone and step clamp
+- [ ] `DEADZONE_PX`: raise it if the turret twitches when the target is still and centered;
+      lower it if it stops noticeably off center
+- [ ] `MAX_STEPS`: raise it if big moves take too many corrections; lower it if a bad frame causes a big swing
+- [ ] Final values: `DEADZONE_PX` ____ `MAX_STEPS` ____
+
+### 4. Things to watch for while testing
+- [ ] Lag: the camera frame that arrives after a move may have been taken **during** the move, which
+      can cause overshoot even with a good `Kp`. If so, lower `Kp` or add a short pause after a move.
+- [ ] Missed steps / stalls at high speed. `STEP_PERIOD_US` in `stepper.c` is 1000 µs; don't lower it until gains are sorted.
+- [ ] Python sending floats or off-frame values → `bad coords line` warnings (see "Python script hygiene" below)
+- [ ] Remove the temporary `err/steps` log once the values are set
+
+---
+
+## NEXT UP (after the bench test)
+
+### 1. OLED polish
+- [x] `oled_show_coords(x, y, found, inches)` shows `X:..,Y:..` (or `no coords`) + distance (commit `056cad6`)
+- [x] `main.c` keeps the last `struct coords` before the loop, so the screen always has the newest target
+- [ ] Only redraw when something changed, or at most every ~100–200 ms. Right now it redraws every
+      pass, and each `cfb_framebuffer_finalize` is a 1 KB I2C transfer (~25 ms at 100 kHz)
 - [ ] Optional: `clock-frequency = <I2C_BITRATE_FAST>;` on `&i2c1` for 400 kHz if redraws slow the loop
+- [ ] Optional: show `NEAR` / motion, using lines 3–4 (the 10x16 font fits 4 lines on 64 px)
 
 ### 2. Cut down the serial log noise
 - [ ] The `distance ... in` line prints every pass (~every 50 ms) and buries the coords lines
 - [ ] Options: log only when the distance changes by more than ~0.5 in, log every Nth pass, or
       make it `LOG_DBG` (hidden at `LOG_LEVEL_INF`)
 - [ ] Same idea for `target x=.. y=..`: log on change, not every message
-- [ ] Python side: drop the `print` in the camera loop once things are stable. The board's
-      `target x=.. y=..` log already confirms what arrived, and two threads printing at once
-      jumbles the lines.
+- [ ] Python side: drop the `print` in the camera loop once things are stable. Two threads
+      printing at once jumbles the lines.
 
 ### 3. Python script hygiene
 - [ ] Always send whole numbers: `f"X:{int(x)},Y:{int(y)}\n"` (`X:320.0` is rejected)
 - [ ] Clamp to the frame: `max(0, min(x, W - 1))`, since negative / off-frame values are rejected
-- [ ] Send `NONE\n` when the target is lost so the board knows to stop tracking
+- [ ] Send `NONE\n` when the target is lost so the board stops tracking
 - [ ] Write down the camera resolution (e.g. 640x480) and frame center here: ______
 
-### 4. Commit the coords work
-- [ ] Delete the misspelled draft `drivers/cords.c` (untracked, not compiled, fully replaced by `drivers/coords.c`)
-- [ ] Commit `drivers/coords.c`, `drivers/coords.h`, `boards/stm32f4_disco.overlay`, `CMakeLists.txt`,
-      `prj.conf`, `src/main.c`, `todo.md`
-- [ ] Consider doing the `build/` cleanup from "Repo housekeeping" first, so build outputs stop showing up in every commit
+### 4. Commit
+- [x] Coords + OLED work committed (`e3a404a`, `056cad6`); `drivers/cords.c` removed
+- [ ] Commit the tracking code in `src/main.c` once the bench test gives sane values
+- [ ] `build/` is **still tracked in git**, so build outputs show up as changes. Do the cleanup in "Repo housekeeping" below.
 
-### 5. Actual tracking: pixel offset → pan/tilt steps
-- [ ] Error from frame center: `err_x = x - CENTER_X`, `err_y = y - CENTER_Y` (e.g. center 320, 240 for 640x480)
-- [ ] Dead zone: ignore small errors (e.g. ±10 px) so the turret doesn't jitter around the target
-- [ ] Start with a simple proportional move: `steps = err * K`, clamp to a max step per update, tune `K` on the bench
-- [ ] Check directions: if the turret moves away from the target, flip the sign (or the DIR pin polarity) for that axis
-- [ ] Don't move on `NONE`. Optionally sweep or return home after N seconds with no target.
-- [ ] **The steppers must stop blocking the loop.** `stepper_move()` blocks until the move is done,
-      so coords and the ToF go stale while it runs. Options:
+### 5. Tracking, after the values are tuned
+- [x] Error from frame center, dead zone, proportional move clamped to `MAX_STEPS`, no move on `NONE` / stale target
+- [ ] Tune the values (→ TOMORROW above)
+- [ ] Optional: sweep or return home after N seconds with no target
+- [ ] **The steppers must stop blocking the loop.** `stepper_move()` blocks until the move is done
+      (pan then tilt, one after the other), so coords, ToF and the OLED go stale meanwhile. Options:
       - move a few steps per loop pass toward the target (simplest)
       - a stepper thread (`K_THREAD_DEFINE`) that chases a target position the main loop updates
+        (also lets pan and tilt move at the same time)
       - timer/PWM-driven step pulses (most work, smoothest)
 - [ ] Decide what the PIR and ToF do in tracking mode (e.g. PIR wakes the turret, ToF distance gates firing)
 
@@ -165,7 +214,7 @@ overlay/chosen entry changes):
 
 ---
 
-## Tomorrow (2026-11-19)
+## Still open from 2026-11-19: PIR tuning
 
 ### A. Check the HC-SR501 PIR sensitivity
 The PIR code is in (`sensors/pir.c`, `pir-gpios` on PE7), so this is tuning and testing on the bench.
