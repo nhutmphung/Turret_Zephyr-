@@ -43,7 +43,7 @@ static int startup_seq(void)
 	if (vl53l0x_init() < 0) {
 		return -ENODEV;
 	}
-	LOG_INF("ToF sensor ready.");
+LOG_INF("ToF sensor ready.");
 
 	if (pir_init(&pir) < 0) {
 		return -ENODEV;
@@ -75,10 +75,15 @@ int main(void)
 		return 0;
 	}
 
-	/* Test pattern: sweep each axis forward and back */
+    struct coords tgt = { .found = false }; 
 	while (1) {
 
-		struct coords tgt;
+        float inch;
+        bool near; 
+        bool tgtFound;
+
+		int ret = vl53l0x_read_in(&inch, &near);
+
 		if (coords_get(&tgt)) {
 			if (tgt.found) {
 				LOG_INF("target x=%d y=%d", tgt.x, tgt.y);
@@ -87,19 +92,13 @@ int main(void)
 			}
 		}
 
-		float inch;
-		bool near;
+        if (oled_ok) {
+            oled_show_coords(tgt.x, tgt.y, tgt.found, inch);
+        }
 
-		int ret = vl53l0x_read_in(&inch, &near);
 		if (ret == 0) {
 			LOG_INF("distance %.1f in, near = %d", (double)inch, near);
-			if (oled_ok) {
-				oled_show_distance(inch, near);
-			}
-		} else if (oled_ok) {
-			oled_print("ToF error", NULL);
-		}
-
+        }
         if( pir_detect(&pir)) {
             LOG_INF("motion detected");
         }  

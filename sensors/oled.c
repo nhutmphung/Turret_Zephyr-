@@ -52,14 +52,20 @@ void oled_print(const char *line1, const char *line2) {
         cfb_print(oled, line2, 0, font_h);
     }
     cfb_framebuffer_finalize(oled);      // push the buffer to the screen over I2C
-}
+}                                                                             
 
-void oled_show_distance(float inches, bool near) {
-    char buf[32];
 
-    // split into whole + tenths so we don't depend on printf float support
-    int tenths = (int)(inches * 10.0f + 0.5f);
-    snprintf(buf, sizeof(buf), "%d.%d in", tenths / 10, tenths % 10);
+void oled_show_coords(int xCoords, int yCoords, bool found, float distance) {
+    char  line_coords[32];
+    char  line_dist[32]; 
 
-    oled_print(buf, near ? "NEAR" : "");
+    if (found) {
+        snprintf(line_coords, sizeof(line_coords), "X:%d,Y:%d ", xCoords, yCoords); 
+    }
+    else {
+        snprintf(line_coords, sizeof(line_coords), "no coords");         
+    }
+    int tenths = (int)(distance * 10.0f + 0.5f);
+    snprintf(line_dist, sizeof(line_dist), "%d.%d in", tenths / 10, tenths % 10);        
+    oled_print(line_coords, line_dist); 
 }
