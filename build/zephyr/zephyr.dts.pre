@@ -3209,7 +3209,6 @@ zephyr_udc0: &usbotg_fs {
 };
 # 0 "<command-line>" 2
 # 1 "/home/nhut/zephyrproject/turret/boards/stm32f4_disco.overlay" 1
-
 / {
  chosen {
 
@@ -3217,11 +3216,20 @@ zephyr_udc0: &usbotg_fs {
  };
 
  zephyr,user {
-        pir-gpios = <&gpioe 7 ((0 << 0) | (1 << 5))>;
-  pan-step-gpios = <&gpioe 9 (0 << 0)>;
-  pan-dir-gpios = <&gpioe 10 (0 << 0)>;
-  tilt-step-gpios = <&gpioe 11 (0 << 0)>;
-  tilt-dir-gpios = <&gpioe 12 (0 << 0)>;
+  pir-gpios = <&gpioe 7 ((0 << 0) | (1 << 5))>;
+ };
+
+
+ pan_ctrl: pan-motion-controller {
+  compatible = "zephyr,gpio-step-dir-stepper-ctrl";
+  step-gpios = <&gpioe 9 (0 << 0)>;
+  dir-gpios = <&gpioe 10 (0 << 0)>;
+ };
+
+ tilt_ctrl: tilt-motion-controller {
+  compatible = "zephyr,gpio-step-dir-stepper-ctrl";
+  step-gpios = <&gpioe 11 (0 << 0)>;
+  dir-gpios = <&gpioe 12 (0 << 0)>;
  };
 };
 

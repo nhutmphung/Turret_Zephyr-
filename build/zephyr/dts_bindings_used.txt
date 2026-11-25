@@ -103,3 +103,4 @@
 /home/nhut/zephyrproject/zephyr/dts/bindings/led/gpio-leds.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/input/gpio-keys.yaml
 /home/nhut/zephyrproject/zephyr/dts/bindings/led/pwm-leds.yaml
+/home/nhut/zephyrproject/zephyr/dts/bindings/stepper/zephyr,gpio-step-dir-stepper-ctrl.yaml

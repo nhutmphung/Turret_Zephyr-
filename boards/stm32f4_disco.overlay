@@ -1,4 +1,3 @@
-
 / {
 	chosen {
 		/* UART the python coords come in on (shared with the log console) */
@@ -6,11 +5,20 @@
 	};
 
 	zephyr,user {
-        pir-gpios       = <&gpioe 7  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>; 
-		pan-step-gpios  = <&gpioe 9  GPIO_ACTIVE_HIGH>;
-		pan-dir-gpios   = <&gpioe 10 GPIO_ACTIVE_HIGH>;
-		tilt-step-gpios = <&gpioe 11 GPIO_ACTIVE_HIGH>;
-		tilt-dir-gpios  = <&gpioe 12 GPIO_ACTIVE_HIGH>;
+		pir-gpios = <&gpioe 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+	};
+
+	/* A4988 drivers, run by Zephyr's GPIO step/dir motion controller */
+	pan_ctrl: pan-motion-controller {
+		compatible = "zephyr,gpio-step-dir-stepper-ctrl";
+		step-gpios = <&gpioe 9  GPIO_ACTIVE_HIGH>;
+		dir-gpios  = <&gpioe 10 GPIO_ACTIVE_HIGH>;
+	};
+
+	tilt_ctrl: tilt-motion-controller {
+		compatible = "zephyr,gpio-step-dir-stepper-ctrl";
+		step-gpios = <&gpioe 11 GPIO_ACTIVE_HIGH>;
+		dir-gpios  = <&gpioe 12 GPIO_ACTIVE_HIGH>;
 	};
 };
 

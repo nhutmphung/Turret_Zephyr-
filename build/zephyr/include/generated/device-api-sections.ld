@@ -14,6 +14,10 @@ SECTION_PROLOGUE(device_api_area,,SUBALIGN(4))
 	PLACE_SYMBOL_HERE(_reset_driver_api_ext_end);
 	Z_LINK_ITERABLE(sensor_driver_api);
 	PLACE_SYMBOL_HERE(_sensor_driver_api_ext_end);
+	Z_LINK_ITERABLE(stepper_driver_api);
+	PLACE_SYMBOL_HERE(_stepper_driver_api_ext_end);
+	Z_LINK_ITERABLE(stepper_ctrl_driver_api);
+	PLACE_SYMBOL_HERE(_stepper_ctrl_driver_api_ext_end);
 	Z_LINK_ITERABLE(shared_irq_driver_api);
 	PLACE_SYMBOL_HERE(_shared_irq_driver_api_ext_end);
 	Z_LINK_ITERABLE(audio_codec_driver_api);
@@ -190,10 +194,6 @@ SECTION_PROLOGUE(device_api_area,,SUBALIGN(4))
 	PLACE_SYMBOL_HERE(_sent_driver_api_ext_end);
 	Z_LINK_ITERABLE(svc_driver_api);
 	PLACE_SYMBOL_HERE(_svc_driver_api_ext_end);
-	Z_LINK_ITERABLE(stepper_driver_api);
-	PLACE_SYMBOL_HERE(_stepper_driver_api_ext_end);
-	Z_LINK_ITERABLE(stepper_ctrl_driver_api);
-	PLACE_SYMBOL_HERE(_stepper_ctrl_driver_api_ext_end);
 	Z_LINK_ITERABLE(uart_driver_api);
 	PLACE_SYMBOL_HERE(_uart_driver_api_ext_end);
 	Z_LINK_ITERABLE(bc12_emul_driver_api);

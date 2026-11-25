@@ -16,6 +16,10 @@
 
 #define K_SYSCALL_DRIVER_SENSOR(ptr, op) K_SYSCALL_DRIVER_GEN(ptr, op, sensor, SENSOR)
 
+#define K_SYSCALL_DRIVER_STEPPER(ptr, op) K_SYSCALL_DRIVER_GEN(ptr, op, stepper, STEPPER)
+
+#define K_SYSCALL_DRIVER_STEPPER_CTRL(ptr, op) K_SYSCALL_DRIVER_GEN(ptr, op, stepper_ctrl, STEPPER_CTRL)
+
 #define K_SYSCALL_DRIVER_SHARED_IRQ(ptr, op) K_SYSCALL_DRIVER_GEN(ptr, op, shared_irq, SHARED_IRQ)
 
 #define K_SYSCALL_DRIVER_AUDIO_CODEC(ptr, op) K_SYSCALL_DRIVER_GEN(ptr, op, audio_codec, AUDIO_CODEC)
@@ -193,10 +197,6 @@
 #define K_SYSCALL_DRIVER_SENT(ptr, op) K_SYSCALL_DRIVER_GEN(ptr, op, sent, SENT)
 
 #define K_SYSCALL_DRIVER_SVC(ptr, op) K_SYSCALL_DRIVER_GEN(ptr, op, svc, SVC)
-
-#define K_SYSCALL_DRIVER_STEPPER(ptr, op) K_SYSCALL_DRIVER_GEN(ptr, op, stepper, STEPPER)
-
-#define K_SYSCALL_DRIVER_STEPPER_CTRL(ptr, op) K_SYSCALL_DRIVER_GEN(ptr, op, stepper_ctrl, STEPPER_CTRL)
 
 #define K_SYSCALL_DRIVER_UART(ptr, op) K_SYSCALL_DRIVER_GEN(ptr, op, uart, UART)
 

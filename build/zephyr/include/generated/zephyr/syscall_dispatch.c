@@ -335,6 +335,66 @@ uintptr_t z_mrsh_uart_drv_cmd(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
          uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
 
 __weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_enable(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_disable(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_set_micro_step_res(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_get_micro_step_res(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_set_event_cb(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_ctrl_set_reference_position(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_ctrl_get_actual_position(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_ctrl_set_event_cb(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_ctrl_set_microstep_interval(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_ctrl_configure_ramp(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_ctrl_move_by(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_ctrl_move_to(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_ctrl_run(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_ctrl_stop(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
+uintptr_t z_mrsh_stepper_ctrl_is_moving(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
+         uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
+
+__weak ALIAS_OF(handler_no_syscall)
 uintptr_t z_mrsh_device_get_binding(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3,
          uintptr_t arg4, uintptr_t arg5, uintptr_t arg6, void *ssf);
 
@@ -828,6 +888,21 @@ const _k_syscall_handler_t _k_syscall_table[K_SYSCALL_LIMIT] = {
 	[K_SYSCALL_UART_LINE_CTRL_SET] = z_mrsh_uart_line_ctrl_set,
 	[K_SYSCALL_UART_LINE_CTRL_GET] = z_mrsh_uart_line_ctrl_get,
 	[K_SYSCALL_UART_DRV_CMD] = z_mrsh_uart_drv_cmd,
+	[K_SYSCALL_STEPPER_ENABLE] = z_mrsh_stepper_enable,
+	[K_SYSCALL_STEPPER_DISABLE] = z_mrsh_stepper_disable,
+	[K_SYSCALL_STEPPER_SET_MICRO_STEP_RES] = z_mrsh_stepper_set_micro_step_res,
+	[K_SYSCALL_STEPPER_GET_MICRO_STEP_RES] = z_mrsh_stepper_get_micro_step_res,
+	[K_SYSCALL_STEPPER_SET_EVENT_CB] = z_mrsh_stepper_set_event_cb,
+	[K_SYSCALL_STEPPER_CTRL_SET_REFERENCE_POSITION] = z_mrsh_stepper_ctrl_set_reference_position,
+	[K_SYSCALL_STEPPER_CTRL_GET_ACTUAL_POSITION] = z_mrsh_stepper_ctrl_get_actual_position,
+	[K_SYSCALL_STEPPER_CTRL_SET_EVENT_CB] = z_mrsh_stepper_ctrl_set_event_cb,
+	[K_SYSCALL_STEPPER_CTRL_SET_MICROSTEP_INTERVAL] = z_mrsh_stepper_ctrl_set_microstep_interval,
+	[K_SYSCALL_STEPPER_CTRL_CONFIGURE_RAMP] = z_mrsh_stepper_ctrl_configure_ramp,
+	[K_SYSCALL_STEPPER_CTRL_MOVE_BY] = z_mrsh_stepper_ctrl_move_by,
+	[K_SYSCALL_STEPPER_CTRL_MOVE_TO] = z_mrsh_stepper_ctrl_move_to,
+	[K_SYSCALL_STEPPER_CTRL_RUN] = z_mrsh_stepper_ctrl_run,
+	[K_SYSCALL_STEPPER_CTRL_STOP] = z_mrsh_stepper_ctrl_stop,
+	[K_SYSCALL_STEPPER_CTRL_IS_MOVING] = z_mrsh_stepper_ctrl_is_moving,
 	[K_SYSCALL_DEVICE_GET_BINDING] = z_mrsh_device_get_binding,
 	[K_SYSCALL_DEVICE_IS_READY] = z_mrsh_device_is_ready,
 	[K_SYSCALL_DEVICE_INIT] = z_mrsh_device_init,

@@ -495,6 +495,17 @@
     ]
   ],
   [
+    "CONFIG_DT_HAS_ZEPHYR_GPIO_STEP_DIR_STEPPER_CTRL_ENABLED",
+    "n",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/turret/build/Kconfig/Kconfig.dts",
+      19278
+    ]
+  ],
+  [
     "CONFIG_DT_HAS_ZEPHYR_MEMORY_REGION_ENABLED",
     "n",
     "bool",
@@ -6413,9 +6424,183 @@
     "CONFIG_STEPPER",
     "y",
     "bool",
+    "y",
+    "assign",
+    [
+      "/home/nhut/zephyrproject/turret/prj.conf",
+      14
+    ]
+  ],
+  [
+    "CONFIG_STEPPER_LOG_LEVEL_OFF",
+    "y",
+    "bool",
     null,
     "unset",
     null
+  ],
+  [
+    "CONFIG_STEPPER_LOG_LEVEL_ERR",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_STEPPER_LOG_LEVEL_WRN",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_STEPPER_LOG_LEVEL_INF",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_STEPPER_LOG_LEVEL_DBG",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_STEPPER_LOG_LEVEL_DEFAULT",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/subsys/logging/Kconfig.template.log_config",
+      5
+    ]
+  ],
+  [
+    "CONFIG_STEPPER_LOG_LEVEL",
+    "n",
+    "int",
+    "3",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/subsys/logging/Kconfig.template.log_config",
+      36
+    ]
+  ],
+  [
+    "CONFIG_STEPPER_INIT_PRIORITY",
+    "y",
+    "int",
+    "90",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/stepper/Kconfig",
+      17
+    ]
+  ],
+  [
+    "CONFIG_STEPPER_ADI_TMC_SPI",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_STEPPER_ADI_TMC_UART",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_STEPPER_ADI_TMCM_RS485",
+    "y",
+    "bool",
+    null,
+    "unset",
+    null
+  ],
+  [
+    "CONFIG_STEPPER_CTRL_EVENT_HANDLER",
+    "n",
+    "bool",
+    "y",
+    "select",
+    [
+      "GPIO_STEPPER && STEPPER"
+    ]
+  ],
+  [
+    "CONFIG_STEPPER_CTRL_ISR_SAFE_EVENTS",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/stepper/event_handler/Kconfig",
+      13
+    ]
+  ],
+  [
+    "CONFIG_STEPPER_CTRL_EVENT_QUEUE_LEN",
+    "y",
+    "int",
+    "4",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/stepper/event_handler/Kconfig",
+      20
+    ]
+  ],
+  [
+    "CONFIG_GPIO_STEPPER",
+    "n",
+    "bool",
+    "y",
+    "select",
+    [
+      "STEPPER_GPIO_STEP_DIR_STEPPER_CTRL && DT_HAS_ZEPHYR_GPIO_STEP_DIR_STEPPER_CTRL_ENABLED && STEPPER"
+    ]
+  ],
+  [
+    "CONFIG_GPIO_STEPPER_COUNTER_TIMING",
+    "y",
+    "bool",
+    "n",
+    "assign",
+    [
+      "/home/nhut/zephyrproject/turret/prj.conf",
+      15
+    ]
+  ],
+  [
+    "CONFIG_STEPPER_GPIO_STEP_DIR_STEPPER_CTRL",
+    "y",
+    "bool",
+    "y",
+    "default",
+    [
+      "/home/nhut/zephyrproject/zephyr/drivers/stepper/gpio_stepper/Kconfig.gpio_step_dir",
+      9
+    ]
+  ],
+  [
+    "CONFIG_STEP_DIR_STEPPER",
+    "n",
+    "bool",
+    "y",
+    "select",
+    [
+      "STEPPER_GPIO_STEP_DIR_STEPPER_CTRL && DT_HAS_ZEPHYR_GPIO_STEP_DIR_STEPPER_CTRL_ENABLED && STEPPER"
+    ]
   ],
   [
     "CONFIG_TIMEAWARE_GPIO",

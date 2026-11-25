@@ -130,6 +130,10 @@ device_api_area : SUBALIGN(4)
  _reset_driver_api_ext_end = .;
  _sensor_driver_api_list_start = .; KEEP(*(SORT_BY_NAME(._sensor_driver_api.static.*))); _sensor_driver_api_list_end = .;;
  _sensor_driver_api_ext_end = .;
+ _stepper_driver_api_list_start = .; KEEP(*(SORT_BY_NAME(._stepper_driver_api.static.*))); _stepper_driver_api_list_end = .;;
+ _stepper_driver_api_ext_end = .;
+ _stepper_ctrl_driver_api_list_start = .; KEEP(*(SORT_BY_NAME(._stepper_ctrl_driver_api.static.*))); _stepper_ctrl_driver_api_list_end = .;;
+ _stepper_ctrl_driver_api_ext_end = .;
  _shared_irq_driver_api_list_start = .; KEEP(*(SORT_BY_NAME(._shared_irq_driver_api.static.*))); _shared_irq_driver_api_list_end = .;;
  _shared_irq_driver_api_ext_end = .;
  _audio_codec_driver_api_list_start = .; KEEP(*(SORT_BY_NAME(._audio_codec_driver_api.static.*))); _audio_codec_driver_api_list_end = .;;
@@ -306,10 +310,6 @@ device_api_area : SUBALIGN(4)
  _sent_driver_api_ext_end = .;
  _svc_driver_api_list_start = .; KEEP(*(SORT_BY_NAME(._svc_driver_api.static.*))); _svc_driver_api_list_end = .;;
  _svc_driver_api_ext_end = .;
- _stepper_driver_api_list_start = .; KEEP(*(SORT_BY_NAME(._stepper_driver_api.static.*))); _stepper_driver_api_list_end = .;;
- _stepper_driver_api_ext_end = .;
- _stepper_ctrl_driver_api_list_start = .; KEEP(*(SORT_BY_NAME(._stepper_ctrl_driver_api.static.*))); _stepper_ctrl_driver_api_list_end = .;;
- _stepper_ctrl_driver_api_ext_end = .;
  _uart_driver_api_list_start = .; KEEP(*(SORT_BY_NAME(._uart_driver_api.static.*))); _uart_driver_api_list_end = .;;
  _uart_driver_api_ext_end = .;
  _bc12_emul_driver_api_list_start = .; KEEP(*(SORT_BY_NAME(._bc12_emul_driver_api.static.*))); _bc12_emul_driver_api_list_end = .;;

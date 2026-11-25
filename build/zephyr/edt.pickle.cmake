@@ -2468,6 +2468,20 @@ set_target_properties(${DEVICETREE_TARGET}
     "DT_REG|/zephyr,user|ADDR" ""
     "DT_REG|/zephyr,user|SIZE" ""
     "DT_UNIT_ADDR|/zephyr,user" "NONE"
+    "DT_NODE|/pan-motion-controller" TRUE
+    "DT_NODELABEL|pan_ctrl" "/pan-motion-controller"
+    "DT_PROP|/pan-motion-controller|invert-direction" "False"
+    "DT_REG|/pan-motion-controller|NUM" "0"
+    "DT_REG|/pan-motion-controller|ADDR" ""
+    "DT_REG|/pan-motion-controller|SIZE" ""
+    "DT_UNIT_ADDR|/pan-motion-controller" "NONE"
+    "DT_NODE|/tilt-motion-controller" TRUE
+    "DT_NODELABEL|tilt_ctrl" "/tilt-motion-controller"
+    "DT_PROP|/tilt-motion-controller|invert-direction" "False"
+    "DT_REG|/tilt-motion-controller|NUM" "0"
+    "DT_REG|/tilt-motion-controller|ADDR" ""
+    "DT_REG|/tilt-motion-controller|SIZE" ""
+    "DT_UNIT_ADDR|/tilt-motion-controller" "NONE"
     "DT_COMP|st,stm32f4discovery" "/"
     "DT_COMP|st,stm32f407" "/soc"
     "DT_COMP|st,stm32f4" "/soc"
@@ -2536,4 +2550,5 @@ set_target_properties(${DEVICETREE_TARGET}
     "DT_COMP|gpio-leds" "/leds"
     "DT_COMP|gpio-keys" "/gpio_keys"
     "DT_COMP|pwm-leds" "/pwmleds"
+    "DT_COMP|zephyr,gpio-step-dir-stepper-ctrl" "/pan-motion-controller;/tilt-motion-controller"
 )
