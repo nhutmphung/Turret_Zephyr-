@@ -21,13 +21,10 @@ LOG_MODULE_REGISTER(turret, LOG_LEVEL_INF);
 #define MIN_SPS       20.0f   // slower than this counts as "stop"
 #define COORDS_TIMEOUT_MS 300 // no coords for this long -> stop both motors
 
-// gains are always POSITIVE now: speed = Kp * |error|.
-// the direction comes from the left/right/up/down mapping below, not from the sign of Kp.
 static float Kp_PAN  = 15.0f;  // steps/s per pixel of error
-static float Kp_TILT = 4.0f;   // keep POSITIVE: flip direction with TILT_UP/TILT_DOWN instead
+static float Kp_TILT = 4.0f;  
 
 // which DIR pin level means "left" / "up". if the motor turns the wrong way
-// when the log says LEFT, swap NEGATIVE and POSITIVE here (and only here).
 #define PAN_LEFT   STEPPER_CTRL_DIRECTION_POSITIVE
 #define PAN_RIGHT  STEPPER_CTRL_DIRECTION_NEGATIVE
 #define TILT_UP    STEPPER_CTRL_DIRECTION_POSITIVE
@@ -67,6 +64,8 @@ static const struct pir_sensor pir = {
     .pin = GPIO_DT_SPEC_GET(USER_NODE, pir_gpios),
 };
 
+static const struct gpio_dt_spec pir_led = GPIO_DT_SPEC_GET(USER_NODE, led_pir_gpios);
+
 // brings up every peripheral. returns 0 if the turret can run, negative if not.
 static int startup_seq(void)
 {
@@ -86,7 +85,16 @@ static int startup_seq(void)
 	}
 	LOG_INF("PIR sensor ready.");
 
-	/* the screen is nice-to-have: if it fails, keep the turret running */
+	if (!gpio_is_ready_dt(&pir_led)) {
+		LOG_ERR("PIR led is not ready..");
+		return -ENODEV;
+	}
+	if (gpio_pin_configure_dt(&pir_led, GPIO_OUTPUT_INACTIVE) < 0) {   // output, starts off
+		LOG_ERR("PIR led config failed");
+		return -ENODEV;
+	}
+	LOG_INF("PIR LED ready.");
+
 	oled_ok = (oled_init() == 0);   // no "bool" here: assigns the global instead of making a new local
 	if (oled_ok) {
 		LOG_INF("OLED ready.");
@@ -99,20 +107,8 @@ static int startup_seq(void)
 		return -ENODEV;
 	}
 	LOG_INF("Coords UART ready.");
-
-	/* direction check: watch the turret and make sure each move matches the log.
-	 * remove this once the directions are confirmed. */
-	LOG_INF("dir test: pan LEFT");
-	pan_left(500.0f);  k_msleep(1000); pan_stop(); k_msleep(500);
-	LOG_INF("dir test: pan RIGHT");
-	pan_right(500.0f); k_msleep(1000); pan_stop(); k_msleep(500);
-	LOG_INF("dir test: tilt UP");
-	tilt_up(600.0f);   k_msleep(800);  tilt_stop(); k_msleep(500);
-	LOG_INF("dir test: tilt DOWN");
-	tilt_down(600.0f); k_msleep(800);  tilt_stop();
-
-	LOG_INF("turret ready");
-	return 0;
+    
+    return 0;
 }
 
 int main(void)
@@ -150,7 +146,11 @@ int main(void)
 
 		if (pir_detect(&pir)) {
 			LOG_INF("motion detected");
+            gpio_pin_set_dt(&pir_led, 1);
 		}
+        else {
+            gpio_pin_set_dt(&pir_led, 0);
+        }
 
 		// track: on every new message, set a speed. the motors keep running at that
 		// speed between messages (like runSpeed() on the Arduino)

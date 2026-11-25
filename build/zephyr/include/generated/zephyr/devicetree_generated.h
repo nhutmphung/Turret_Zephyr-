@@ -3742,7 +3742,8 @@
 
 /* Ordinals for what depends directly on this node: */
 #define DT_N_S_soc_S_pin_controller_40020000_S_gpio_40020400_SUPPORTS_ORDS \
-	27, /* /soc/i2c@40005400 */
+	27, /* /soc/i2c@40005400 */ \
+	37, /* /zephyr,user */
 #define DT_N_NODELABEL_DT_N_S_soc_S_pin_controller_40020000_S_gpio_40020400_IDX_0_C_TOKEN gpiob
 
 /* Existence and alternate IDs: */
@@ -5788,7 +5789,8 @@
 /* Ordinals for what this node depends on directly: */
 #define DT_N_S_zephyr_user_REQUIRES_ORDS \
 	0, /* / */ \
-	22, /* /soc/pin-controller@40020000/gpio@40021000 */
+	22, /* /soc/pin-controller@40020000/gpio@40021000 */ \
+	24, /* /soc/pin-controller@40020000/gpio@40020400 */
 
 /* Ordinals for what depends directly on this node: */
 #define DT_N_S_zephyr_user_SUPPORTS_ORDS /* nothing */
@@ -5831,6 +5833,23 @@
 #define DT_N_S_zephyr_user_P_pir_gpios_FOREACH_PROP_ELEM_SEP_VARGS(fn, sep, ...) fn(DT_N_S_zephyr_user, pir_gpios, 0, __VA_ARGS__)
 #define DT_N_S_zephyr_user_P_pir_gpios_LEN 1
 #define DT_N_S_zephyr_user_P_pir_gpios_EXISTS 1
+#define DT_N_S_zephyr_user_P_led_pir_gpios_IDX_0_EXISTS 1
+#define DT_N_S_zephyr_user_P_led_pir_gpios_IDX_0_PH DT_N_S_soc_S_pin_controller_40020000_S_gpio_40020400
+#define DT_N_S_zephyr_user_P_led_pir_gpios_IDX_0_VAL_pin 1
+#define DT_N_S_zephyr_user_P_led_pir_gpios_IDX_0_VAL_pin_EXISTS 1
+#define DT_N_S_zephyr_user_P_led_pir_gpios_IDX_0_VAL_flags 0
+#define DT_N_S_zephyr_user_P_led_pir_gpios_IDX_0_VAL_flags_EXISTS 1
+#define DT_N_S_zephyr_user_P_led_pir_gpios_IDX_0_FOREACH_CELL(fn) fn(DT_N_S_zephyr_user, led_pir_gpios, 0, pin) \
+	fn(DT_N_S_zephyr_user, led_pir_gpios, 0, flags)
+#define DT_N_S_zephyr_user_P_led_pir_gpios_IDX_0_FOREACH_CELL_SEP(fn, sep) fn(DT_N_S_zephyr_user, led_pir_gpios, 0, pin) DT_DEBRACKET_INTERNAL sep \
+	fn(DT_N_S_zephyr_user, led_pir_gpios, 0, flags)
+#define DT_N_S_zephyr_user_P_led_pir_gpios_IDX_0_NUM_CELLS 2
+#define DT_N_S_zephyr_user_P_led_pir_gpios_FOREACH_PROP_ELEM(fn) fn(DT_N_S_zephyr_user, led_pir_gpios, 0)
+#define DT_N_S_zephyr_user_P_led_pir_gpios_FOREACH_PROP_ELEM_SEP(fn, sep) fn(DT_N_S_zephyr_user, led_pir_gpios, 0)
+#define DT_N_S_zephyr_user_P_led_pir_gpios_FOREACH_PROP_ELEM_VARGS(fn, ...) fn(DT_N_S_zephyr_user, led_pir_gpios, 0, __VA_ARGS__)
+#define DT_N_S_zephyr_user_P_led_pir_gpios_FOREACH_PROP_ELEM_SEP_VARGS(fn, sep, ...) fn(DT_N_S_zephyr_user, led_pir_gpios, 0, __VA_ARGS__)
+#define DT_N_S_zephyr_user_P_led_pir_gpios_LEN 1
+#define DT_N_S_zephyr_user_P_led_pir_gpios_EXISTS 1
 
 /*
  * Devicetree node: /clocks/clk-hsi

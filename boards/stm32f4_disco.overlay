@@ -6,6 +6,7 @@
 
 	zephyr,user {
 		pir-gpios = <&gpioe 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+        led-pir-gpios   = <&gpiob 1 (GPIO_ACTIVE_HIGH)>;
 	};
 
 	/* A4988 drivers, run by Zephyr's GPIO step/dir motion controller */

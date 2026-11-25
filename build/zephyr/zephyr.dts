@@ -487,25 +487,25 @@
 				reset-gpios = < &gpiod 0x4 0x0 >; /* in zephyr/boards/st/stm32f4_disco/stm32f4_disco.dts:234 */
 			};
 
-			/* node '/soc/i2c@40005400/vl53l0x@29' defined in turret/boards/stm32f4_disco.overlay:27 */
+			/* node '/soc/i2c@40005400/vl53l0x@29' defined in turret/boards/stm32f4_disco.overlay:28 */
 			tof: vl53l0x@29 {
-				compatible = "st,vl53l0x"; /* in turret/boards/stm32f4_disco.overlay:28 */
-				reg = < 0x29 >;            /* in turret/boards/stm32f4_disco.overlay:29 */
+				compatible = "st,vl53l0x"; /* in turret/boards/stm32f4_disco.overlay:29 */
+				reg = < 0x29 >;            /* in turret/boards/stm32f4_disco.overlay:30 */
 			};
 
-			/* node '/soc/i2c@40005400/ssd1306@3c' defined in turret/boards/stm32f4_disco.overlay:32 */
+			/* node '/soc/i2c@40005400/ssd1306@3c' defined in turret/boards/stm32f4_disco.overlay:33 */
 			oled: ssd1306@3c {
-				compatible = "solomon,ssd1306"; /* in turret/boards/stm32f4_disco.overlay:33 */
-				reg = < 0x3c >;                 /* in turret/boards/stm32f4_disco.overlay:34 */
-				width = < 0x80 >;               /* in turret/boards/stm32f4_disco.overlay:35 */
-				height = < 0x40 >;              /* in turret/boards/stm32f4_disco.overlay:36 */
-				segment-offset = < 0x0 >;       /* in turret/boards/stm32f4_disco.overlay:37 */
-				page-offset = < 0x0 >;          /* in turret/boards/stm32f4_disco.overlay:38 */
-				display-offset = < 0x0 >;       /* in turret/boards/stm32f4_disco.overlay:39 */
-				multiplex-ratio = < 0x3f >;     /* in turret/boards/stm32f4_disco.overlay:40 */
-				segment-remap;                  /* in turret/boards/stm32f4_disco.overlay:41 */
-				com-invdir;                     /* in turret/boards/stm32f4_disco.overlay:42 */
-				prechargep = < 0x22 >;          /* in turret/boards/stm32f4_disco.overlay:43 */
+				compatible = "solomon,ssd1306"; /* in turret/boards/stm32f4_disco.overlay:34 */
+				reg = < 0x3c >;                 /* in turret/boards/stm32f4_disco.overlay:35 */
+				width = < 0x80 >;               /* in turret/boards/stm32f4_disco.overlay:36 */
+				height = < 0x40 >;              /* in turret/boards/stm32f4_disco.overlay:37 */
+				segment-offset = < 0x0 >;       /* in turret/boards/stm32f4_disco.overlay:38 */
+				page-offset = < 0x0 >;          /* in turret/boards/stm32f4_disco.overlay:39 */
+				display-offset = < 0x0 >;       /* in turret/boards/stm32f4_disco.overlay:40 */
+				multiplex-ratio = < 0x3f >;     /* in turret/boards/stm32f4_disco.overlay:41 */
+				segment-remap;                  /* in turret/boards/stm32f4_disco.overlay:42 */
+				com-invdir;                     /* in turret/boards/stm32f4_disco.overlay:43 */
+				prechargep = < 0x22 >;          /* in turret/boards/stm32f4_disco.overlay:44 */
 			};
 		};
 
@@ -1602,20 +1602,21 @@
 
 	/* node '/zephyr,user' defined in turret/boards/stm32f4_disco.overlay:7 */
 	zephyr,user {
-		pir-gpios = < &gpioe 0x7 0x20 >; /* in turret/boards/stm32f4_disco.overlay:8 */
+		pir-gpios = < &gpioe 0x7 0x20 >;    /* in turret/boards/stm32f4_disco.overlay:8 */
+		led-pir-gpios = < &gpiob 0x1 0x0 >; /* in turret/boards/stm32f4_disco.overlay:9 */
 	};
 
-	/* node '/pan-motion-controller' defined in turret/boards/stm32f4_disco.overlay:12 */
+	/* node '/pan-motion-controller' defined in turret/boards/stm32f4_disco.overlay:13 */
 	pan_ctrl: pan-motion-controller {
-		compatible = "zephyr,gpio-step-dir-stepper-ctrl"; /* in turret/boards/stm32f4_disco.overlay:13 */
-		step-gpios = < &gpioe 0x9 0x0 >;                  /* in turret/boards/stm32f4_disco.overlay:14 */
-		dir-gpios = < &gpioe 0xa 0x0 >;                   /* in turret/boards/stm32f4_disco.overlay:15 */
+		compatible = "zephyr,gpio-step-dir-stepper-ctrl"; /* in turret/boards/stm32f4_disco.overlay:14 */
+		step-gpios = < &gpioe 0x9 0x0 >;                  /* in turret/boards/stm32f4_disco.overlay:15 */
+		dir-gpios = < &gpioe 0xa 0x0 >;                   /* in turret/boards/stm32f4_disco.overlay:16 */
 	};
 
-	/* node '/tilt-motion-controller' defined in turret/boards/stm32f4_disco.overlay:18 */
+	/* node '/tilt-motion-controller' defined in turret/boards/stm32f4_disco.overlay:19 */
 	tilt_ctrl: tilt-motion-controller {
-		compatible = "zephyr,gpio-step-dir-stepper-ctrl"; /* in turret/boards/stm32f4_disco.overlay:19 */
-		step-gpios = < &gpioe 0xb 0x0 >;                  /* in turret/boards/stm32f4_disco.overlay:20 */
-		dir-gpios = < &gpioe 0xc 0x0 >;                   /* in turret/boards/stm32f4_disco.overlay:21 */
+		compatible = "zephyr,gpio-step-dir-stepper-ctrl"; /* in turret/boards/stm32f4_disco.overlay:20 */
+		step-gpios = < &gpioe 0xb 0x0 >;                  /* in turret/boards/stm32f4_disco.overlay:21 */
+		dir-gpios = < &gpioe 0xc 0x0 >;                   /* in turret/boards/stm32f4_disco.overlay:22 */
 	};
 };

@@ -3217,6 +3217,7 @@ zephyr_udc0: &usbotg_fs {
 
  zephyr,user {
   pir-gpios = <&gpioe 7 ((0 << 0) | (1 << 5))>;
+        led-pir-gpios = <&gpiob 1 ((0 << 0))>;
  };
 
 
